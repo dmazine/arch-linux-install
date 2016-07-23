@@ -76,8 +76,8 @@ Type w to write the partition table to disk and exit
 
 ## References
 
-[Arch Linux Installation guide](https://wiki.archlinux.org/index.php/installation_guide#Pre-installation)
-[Arch Linux EFI Install Guide](http://gloriouseggroll.tv/arch-linux-efi-install-guide/)
-[Arch Linux LVM](https://wiki.archlinux.org/index.php/LVM)
-[How much SWAP space on a 2-4GB system?](http://serverfault.com/questions/5841/how-much-swap-space-on-a-high-memory-system)
-[I have 16GB RAM. Do I need 32GB swap?](http://askubuntu.com/a/49130)
+- [Arch Linux Installation guide](https://wiki.archlinux.org/index.php/installation_guide#Pre-installation)
+- [Arch Linux EFI Install Guide](http://gloriouseggroll.tv/arch-linux-efi-install-guide/)
+- [Arch Linux LVM](https://wiki.archlinux.org/index.php/LVM)
+- [How much SWAP space on a 2-4GB system?](http://serverfault.com/questions/5841/how-much-swap-space-on-a-high-memory-system)
+- [I have 16GB RAM. Do I need 32GB swap?](http://askubuntu.com/a/49130)
