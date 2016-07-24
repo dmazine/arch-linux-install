@@ -39,12 +39,12 @@ In my case, I'm going to install Arch on `/dev/sda` and create two partitions:
 # gdisk /dev/sda
 ```
 
-Type `o` to create a new empty GUID partition table (GPT).
-Type `n` to create the boot partition.
-Partition number: `1`.
+Type o to create a new empty GUID partition table (GPT).
+Type n to create the boot partition.
+Partition number: 1.
 First sector: Leave this blank.
-Size in sectors: `+512M`.
-Hex code or GUID: `ef00`.
+Size in sectors: +512M.
+Hex code or GUID: ef00.
 
 Type `n` to create the LVM partition.
 Partition number: `2`.
