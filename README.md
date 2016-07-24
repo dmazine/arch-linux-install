@@ -15,7 +15,7 @@ Available choices can be listed with ls `/usr/share/kbd/keymaps/**/*.map.gz`.
 ```
 wifi-menu
 ```
-Test it using `ping -c 3 www.google.com`
+Test it using `ping -c 3 www.google.com`.
 
 ## Update the system clock
 ```
@@ -23,7 +23,7 @@ Test it using `ping -c 3 www.google.com`
 ```
 
 ## Partition the disks
-Identify the disk names with `lsblk` (results ending in rom, loop or airoot can be ignored)
+Identify the disk names with `lsblk` (results ending in rom, loop or airoot can be ignored).
 
 In my case, I'm going to install Arch on `/dev/sda` and create two partitions:
 
@@ -39,29 +39,30 @@ In my case, I'm going to install Arch on `/dev/sda` and create two partitions:
 # gdisk /dev/sda
 ```
 
-Type `o` to create a new empty GUID partition table (GPT)
+Type `o` to create a new empty GUID partition table (GPT).
 
-Type n to create the boot partition
-Partition number: `1`
-First sector: Leave this blank
-Size in sectors: `+512M`
-Hex code or GUID: `ef00`
+Type `n` to create the boot partition.
+Partition number: `1`.
+First sector: Leave this blank.
+Size in sectors: `+512M`.
+Hex code or GUID: `ef00`.
 
-Type `n` to create the LVM partition
-Partition number: `2`
-First sector: Leave this blank
-Size in sectors: Leave this blank
-Hex code or GUID: `8e00`
+Type `n` to create the LVM partition.
+Partition number: `2`.
+First sector: Leave this blank.
+Size in sectors: Leave this blank.
+Hex code or GUID: `8e00`.
 
-Type `p` to print the partition table and check if it is correct
+Type `p` to print the partition table and confirm that it was created correctly.
 
-Type `w` to write the partition table to disk and exit
+Type `w` to write the partition table to disk and exit.
 
 ### Create LVM physical volume
 ```
 # pvcreate /dev/sda2
 ```
-Check if the physical volume was created correctly
+
+Confirm that the physical volume was created correctly.
 ```
 # pvdisplay
 ```
@@ -70,7 +71,8 @@ Check if the physical volume was created correctly
 ```
 # vgcreate vg_linux /dev/sda2
 ```
-Check if the volume group was created correctly
+
+Confirm that the volume group was created correctly.
 ```
 # vgdisplay
 ```
@@ -85,22 +87,22 @@ I'm going to create three logical volumes:
 |lv_root       |20gb |Root partition  |
 |lv_home       |200gb|Home partition  |
 
-Create the swap partition
+Create the swap partition.
 ```
 # lvcreate -n lv_swap -L 24G -C y vg_linux
 ```
 
-Create the root partition
+Create the root partition.
 ```
 # lvcreate -n lv_root -L 20G vg_linux
 ```
 
-Create the home partition
+Create the home partition.
 ```
 # lvcreate -n lv_home -L 200G vg_linux
 ```
 
-Check if the logical volumes were created correctly
+Confirm that the logical volumes were created correctly.
 ```
 #lvdisplay
 ```
