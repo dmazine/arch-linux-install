@@ -122,7 +122,7 @@ If you cannot find them, use the next commands to bring up the module for creati
 # vgchange -ay
 ```
 
-### Create file systems
+## Format the partitions
 
 - EFI System Partition (ESP)
 ```
@@ -144,7 +144,7 @@ If you cannot find them, use the next commands to bring up the module for creati
 # mkfs.ext4 /dev/mapper/vg_linux-lv_home
 ```
 
-### Mount file systems
+## Mount the partitions
 
 - Root partition
 ```
@@ -167,6 +167,103 @@ Confirm that the file systems were mounted correctly.
 ```
 lsblk
 ```
+
+## Rank the mirrors by speed
+
+Back up the existing `/etc/pacman.d/mirrorlist`:
+```
+# cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+```
+
+Run the following sed line to uncomment every mirror:
+```
+# sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist.backup
+```
+
+Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirrors:
+```
+# rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
+```
+
+## Install the base system
+
+```
+# pacstrap /mnt base base-devel
+```
+
+## Configure the system
+
+- Generate `fstab` file
+
+```
+# genfstab -p /mnt > /mnt/etc/fstab
+```
+
+- Change root into the new system
+
+```
+# arch-chroot /mnt
+```
+
+- Set the time zone
+
+```
+# ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+```
+
+Run `hwclock` to generate `/etc/adjtime`
+
+```
+# hwclock --systohc --utc
+```
+
+- Locale
+
+Edit the `/etc/locale.gen` file and uncomment the following locales
+
+```
+en_US.UTF-8 UTF-8
+en_US ISO-8859-1
+```
+
+Generate the selected locales
+
+```
+# locale-gen
+```
+
+Add `LANG=your_locale` to `/etc/locale.conf`,
+
+```
+# echo "LANG=en_US.UTF-8" > /etc/locale.conf
+```
+
+Add console keymap and font preferences to `/etc/vconsole.conf`.
+
+```
+# echo "KEYMAP=br-abnt2" > /etc/vconsole.conf
+```
+
+- Hostname
+
+Create an entry for your hostname in `/etc/hostname`.
+
+```
+# echo "myhostname" > /etc/hostname
+```
+
+It is recommended to also set the hostname in `/etc/hosts`:
+
+```
+#
+# /etc/hosts: static lookup table for host names
+#
+
+#<ip-address>	<hostname.domain.org>	<hostname>
+127.0.0.1	localhost.localdomain	localhost	 myhostname
+::1		localhost.localdomain	localhost	 myhostname
+```
+
 
 ## References
 
