@@ -273,6 +273,108 @@ It is recommended to also set the hostname in `/etc/hosts`:
 Include = /etc/pacman.d/mirrorlist
 ```
 
+### Install basic software
+
+```
+# pacman -Syu
+
+# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd vim
+```
+
+### Automatic switching of network profiles
+
+Find what your interfaces are called
+```
+# ip link
+```
+
+Package `ifplugd` for wired interfaces: After starting and enabling `netctl-ifplugd@interface.service` DHCP profiles are started/stopped when the network cable is plugged in and out.
+```
+# systemctl enable netctl-ifplugd@interface.service
+```
+
+Package `wpa_actiond` for wireless interfaces: After starting and enabling `netctl-auto@interface.service` profiles are started/stopped automatically as you move from the range of one network into the range of another network (roaming).
+```
+# systemctl enable netctl-auto@interface.service
+```
+
+### Install and configure sudo:
+
+```
+# pacman -S sudo
+```
+
+Run the `visudo` to edit the `/etc/sudoers` file
+```
+# visudo
+```
+
+Grant sudo access to users in the group wheel when enabled.
+```
+## Allows people in group wheel to run all commands
+# %wheel    ALL=(ALL)    ALL
+```
+
+### Activate NTP Client
+
+```
+# systemctl enable systemd-timesyncd
+```
+
+### Set root password
+
+```
+# passwd
+```
+
+### Add lvm2 hook to mkinitcpio.conf for root on LVM
+
+Edit the file `/etc/mkinitcpio.conf` and insert `lvm2` between `block` and `filesystems` like so:
+```
+HOOKS="base udev ... block lvm2 filesystems ..."
+```
+
+### Create initramfs
+
+```
+# mkinitcpio -p linux
+```
+
+### Install bootloader
+
+```
+# bootctl install
+```
+
+### Create bootloader entry
+
+Get the UUID of the root partition
+```
+blkid -s UUID -o value /dev/sda2
+```
+
+Create a boot entry in `/boot/loader/entries/arch.conf`
+```
+title Arch Linux
+linux /vmlinuz-linux
+initrd /initramfs-linux.img
+options root=/dev/mapper/vg_linux-lv_root-root rw
+```
+
+Create a default entry in `/boot/loader/loader.conf`
+```
+timeout 2
+default arch
+```
+
+## Finish installation
+
+```
+# exit
+# umount -R /mnt
+# reboot
+```
+
 ## References
 
 - [Arch Linux Installation guide](https://wiki.archlinux.org/index.php/installation_guide#Pre-installation)
@@ -280,6 +382,7 @@ Include = /etc/pacman.d/mirrorlist
 - [Arch Linux Partitioning](https://wiki.archlinux.org/index.php/partitioning)
 - [Arch Linux LVM](https://wiki.archlinux.org/index.php/LVM)
 - [Arch Linux EFI Install Guide](http://gloriouseggroll.tv/arch-linux-efi-install-guide/)
+- [Arch Linux installation with GPT, LUKS, LVM and i3](https://emanuelduss.ch/2016/03/arch-linux-installation-gpt-luks-lvm-i3/)
 - [How much SWAP space on a 2-4GB system?](http://serverfault.com/questions/5841/how-much-swap-space-on-a-high-memory-system)
 - [I have 16GB RAM. Do I need 32GB swap?](http://askubuntu.com/a/49130)
 - [Swap partition in LVM?](http://unix.stackexchange.com/questions/144586/swap-partition-in-lvm)
