@@ -113,6 +113,53 @@ Confirm that the logical volumes were created correctly.
 #lvdisplay
 ```
 
+Our logical volumes should now be located in `/dev/mapper/` and `/dev/vg_linux`.
+If you cannot find them, use the next commands to bring up the module for creating device nodes and to make volume groups available:
+
+```
+# modprobe dm_mod
+# vgscan
+# vgchange -ay
+```
+
+### Create file systems
+
+- EFI System Partition (ESP)
+```
+# mkfs.fat -F32 /dev/sda1
+```
+
+- Swap partition
+```
+# mkswap /dev/mapper/vg_linux-lv_swap
+```
+
+- Root partition
+```
+# mkfs.ext4 /dev/mapper/vg_linux-lv_root
+```
+
+- Home partition
+```
+# mkfs.ext4 /dev/mapper/vg_linux-lv_home
+```
+
+### Mount file systems
+
+```
+# mkdir /mnt/boot
+# mount /dev/sda1 /mnt/boot
+
+# mount /dev/mapper/vg_linux-lv_root /mnt
+
+# mkdir /mnt/home
+# mount /dev/mapper/vg_linux-lv_home /mnt/home
+```
+
+Confirm that the file systems were mounted correctly.
+```
+lsblk
+```
 
 ## References
 
