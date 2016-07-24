@@ -261,9 +261,9 @@ It is recommended to also set the hostname in `/etc/hosts`:
 # /etc/hosts: static lookup table for host names
 #
 
-#<ip-address>	<hostname.domain.org>	<hostname>
-127.0.0.1	localhost.localdomain	localhost	 myhostname
-::1		localhost.localdomain	localhost	 myhostname
+#<ip-address>    <hostname.domain.org>    <hostname>
+127.0.0.1        localhost.localdomain    localhost    myhostname
+::1              localhost.localdomain    localhost    myhostname
 ```
 
 
