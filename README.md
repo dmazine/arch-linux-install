@@ -146,14 +146,21 @@ If you cannot find them, use the next commands to bring up the module for creati
 
 ### Mount file systems
 
+- Root partition
+```
+# mount /dev/mapper/vg_linux-lv_root /mnt
+```
+
+- Home partition
+```
+# mkdir /mnt/home
+# mount /dev/mapper/vg_linux-lv_home /mnt/home
+```
+
+- EFI System Partition (ESP)
 ```
 # mkdir /mnt/boot
 # mount /dev/sda1 /mnt/boot
-
-# mount /dev/mapper/vg_linux-lv_root /mnt
-
-# mkdir /mnt/home
-# mount /dev/mapper/vg_linux-lv_home /mnt/home
 ```
 
 Confirm that the file systems were mounted correctly.
