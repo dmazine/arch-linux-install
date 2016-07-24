@@ -266,6 +266,12 @@ It is recommended to also set the hostname in `/etc/hosts`:
 ::1              localhost.localdomain    localhost    myhostname
 ```
 
+### Enable multilib repository in `/etc/pacman.conf`
+
+```
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+```
 
 ## References
 
