@@ -45,7 +45,7 @@ Type `n` to create the boot partition.
 
 ```
 Partition number: 1
-First sector: Leave this blank
+First sector: <Leave this blank>
 Size in sectors: +512M
 Hex code or GUID: ef00  
 ```
@@ -54,8 +54,8 @@ Type `n` to create the LVM partition.
 
 ```
 Partition number: 2
-First sector: Leave this blank
-Size in sectors: Leave this blank
+First sector: <Leave this blank>
+Size in sectors: <Leave this blank>
 Hex code or GUID: 8e00
 ```
 
