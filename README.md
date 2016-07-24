@@ -348,11 +348,6 @@ HOOKS="base udev ... block lvm2 filesystems ..."
 
 ### Create bootloader entry
 
-Get the UUID of the root partition
-```
-blkid -s UUID -o value /dev/sda2
-```
-
 Create a boot entry in `/boot/loader/entries/arch.conf`
 ```
 title Arch Linux
