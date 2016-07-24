@@ -110,7 +110,7 @@ Create the home partition.
 
 Confirm that the logical volumes were created correctly.
 ```
-#lvdisplay
+# lvdisplay
 ```
 
 Our logical volumes should now be located in `/dev/mapper/` and `/dev/vg_linux`.
@@ -124,40 +124,47 @@ If you cannot find them, use the next commands to bring up the module for creati
 
 ## Format the partitions
 
-- EFI System Partition (ESP)
+### EFI System Partition (ESP)
+
 ```
 # mkfs.fat -F32 /dev/sda1
 ```
 
-- Swap partition
+### Swap partition
+
 ```
 # mkswap /dev/mapper/vg_linux-lv_swap
 ```
 
-- Root partition
+### Root partition
+
 ```
 # mkfs.ext4 /dev/mapper/vg_linux-lv_root
 ```
 
-- Home partition
+### Home partition
+
 ```
 # mkfs.ext4 /dev/mapper/vg_linux-lv_home
 ```
 
 ## Mount the partitions
 
-- Root partition
+### Root partition
+
 ```
 # mount /dev/mapper/vg_linux-lv_root /mnt
 ```
 
-- Home partition
+### Home partition
+
 ```
 # mkdir /mnt/home
 # mount /dev/mapper/vg_linux-lv_home /mnt/home
 ```
 
-- EFI System Partition (ESP)
+### EFI System Partition (ESP)
+
 ```
 # mkdir /mnt/boot
 # mount /dev/sda1 /mnt/boot
@@ -165,7 +172,7 @@ If you cannot find them, use the next commands to bring up the module for creati
 
 Confirm that the file systems were mounted correctly.
 ```
-lsblk
+# lsblk
 ```
 
 ## Rank the mirrors by speed
@@ -193,34 +200,29 @@ Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirror
 
 ## Configure the system
 
-- Generate `fstab` file
-
+### Generate `fstab` file
 ```
 # genfstab -p /mnt > /mnt/etc/fstab
 ```
 
-- Change root into the new system
-
+### Change root into the new system
 ```
 # arch-chroot /mnt
 ```
 
-- Set the time zone
-
+### Set the time zone
 ```
 # ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 ```
 
-Run `hwclock` to generate `/etc/adjtime`
-
+### Run `hwclock` to generate `/etc/adjtime`
 ```
 # hwclock --systohc --utc
 ```
 
-- Locale
+### Locale
 
 Edit the `/etc/locale.gen` file and uncomment the following locales
-
 ```
 en_US.UTF-8 UTF-8
 en_US ISO-8859-1
@@ -244,7 +246,7 @@ Add console keymap and font preferences to `/etc/vconsole.conf`.
 # echo "KEYMAP=br-abnt2" > /etc/vconsole.conf
 ```
 
-- Hostname
+### Hostname
 
 Create an entry for your hostname in `/etc/hostname`.
 
