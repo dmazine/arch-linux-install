@@ -16,6 +16,10 @@ Run the following command, replacing `/dev/sdx` with your drive, e.g. `/dev/sdb`
 
 Simply select the Arch Linux ISO, the USB drive you want to create the bootable Arch Linux onto and click start.
 
+- Using [USBwriter](https://sourceforge.net/projects/usbwriter/)
+
+Just download the Arch Linux ISO, and with local administrator rights use the USBwriter utility to write to your USB flash memory
+
 ## Set the keyboard layout
 
 ```
