@@ -362,55 +362,80 @@ timeout 2
 default arch
 ```
 
-## Create user
-
-```
-# useradd -m -g users -G wheel -s /bin/bash myuser
-# passwd myuser
-```
-
 ## Install ACPI
 
 ```
 # pacman -S acpi acpid
 # systemctl enable acpid.service
 ```
+
+## Audio driver
+
+```
+# pacman -S pulseaudio pulseaudio-alsa lib32-libpulse lib32-alsa-plugins
+```
+
 ## Install Xorg
 
 ```
 # pacman -S xorg-xinit xorg-utils xorg-server
 ```
 
-## Audio driver
-
-```
-# pacman -S pulseaudio pulseaudio-alsa
-```
-
-Also install `lib32-libpulse` and `lib32-alsa-plugins` if you run a x86_64 system and want to have sound for 32-bit multilib programs like Wine, Skype and Steam.
-
-```
-# pacman -S lib32-libpulse lib32-alsa-plugins
-```
-
 ## Video driver
+
+### AMD
+
+```
+pacman -S xf86-video-amdgpu mesa mesa-libgl lib32-mesa-libgl mesa-vdpau lib32-mesa-vdpau
+```
 
 ### Intel
 
 ```
-# pacman -S xf86-video-intel mesa mesa-demos
+# pacman -S xf86-video-intel mesa mesa-libgl lib32-mesa-libgl vulkan-intel
 ```
 
-### Nvidea
+### Nvidia
 
 ```
-# pacman -S nvidia
+# pacman -S nvidia nvidia-libgl
 # nvidia-xconfig
 ```
 
-### AMD
+## Touchpad, mouse and keyboard
 
+```
+# pacman -S xf86-input-synaptics xf86-input-mouse xf86-input-keyboard
+```
 
+## Desktop Environment
+
+### GNOME
+
+Install GNOME desktop
+
+```
+# pacman -S gnome gnome-extra
+```
+
+Enable `gdm.service` to start GDM at boot time
+
+```
+# systemctl enable gdm.services
+```
+
+Install GNOME Tweak Tool
+
+```
+# pacman -S gnome-tweak-tool
+```
+
+## Create user
+
+```
+# useradd -m -g users -G wheel -s /bin/bash myuser
+# passwd myuser
+```
 
 ## Finish installation
 
@@ -431,4 +456,8 @@ Also install `lib32-libpulse` and `lib32-alsa-plugins` if you run a x86_64 syste
 - [How much SWAP space on a 2-4GB system?](http://serverfault.com/questions/5841/how-much-swap-space-on-a-high-memory-system)
 - [I have 16GB RAM. Do I need 32GB swap?](http://askubuntu.com/a/49130)
 - [Swap partition in LVM?](http://unix.stackexchange.com/questions/144586/swap-partition-in-lvm)
-- [Installing AMD Catalyst drivers on Arch Linux](http://www.neuraladvance.com/installing-amd-catalyst-drivers-on-arch-linux.html)
+- [Intel graphics](https://wiki.archlinux.org/index.php/intel_graphics#Installation)
+- [AMDGPU](https://wiki.archlinux.org/index.php/AMDGPU)
+- [NVIDIA](https://wiki.archlinux.org/index.php/NVIDIA)
+- [GNOME](https://wiki.archlinux.org/index.php/GNOME)
+- [How to install Gnome on Arch Linux](http://www.muktware.io/how-to-install-gnome-on-arch-linux-arch-tutorial/)
