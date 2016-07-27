@@ -1,28 +1,43 @@
 # Arch Linux Install
 
+## Bootable USB
+
+Run the following command, replacing `/dev/sdx` with your drive, e.g. `/dev/sdb`.
+
+```
+# dd bs=4M if=/path/to/archlinux.iso of=/dev/sdx status=progress && sync
+```
+
 ## Set the keyboard layout
+
 ```
 # loadkeys br-abnt2
 ```
+
 Available choices can be listed with ls `/usr/share/kbd/keymaps/**/*.map.gz`.
 
 ## Verify the boot mode
+
 ```
 # ls /sys/firmware/efi/efivars
 ```
 
 ## Connect to the Internet
+
 ```
 wifi-menu
 ```
+
 Test it using `ping -c 3 www.google.com`.
 
 ## Update the system clock
+
 ```
 # timedatectl set-ntp true
 ```
 
 ## Partition the disks
+
 Identify the disk names with `lsblk` (results ending in rom, loop or airoot can be ignored).
 
 In my case, I'm going to install Arch on `/dev/sda` and create two partitions:
@@ -35,6 +50,7 @@ In my case, I'm going to install Arch on `/dev/sda` and create two partitions:
 *See References below to find out the recommended swap size.*
 
 ### Create partitions
+
 ```
 # gdisk /dev/sda
 ```
@@ -64,21 +80,25 @@ Type `p` to print the partition table and confirm that it was created correctly.
 Type `w` to write the partition table to disk and exit.
 
 ### Create LVM physical volume
+
 ```
 # pvcreate /dev/sda2
 ```
 
 Confirm that the physical volume was created correctly.
+
 ```
 # pvdisplay
 ```
 
 ### Create LVM volume group
+
 ```
 # vgcreate vg_linux /dev/sda2
 ```
 
 Confirm that the volume group was created correctly.
+
 ```
 # vgdisplay
 ```
@@ -94,21 +114,25 @@ I'm going to create three logical volumes:
 |lv_home       |200gb|Home partition  |
 
 Create the swap partition.
+
 ```
 # lvcreate -n lv_swap -L 24G -C y vg_linux
 ```
 
 Create the root partition.
+
 ```
 # lvcreate -n lv_root -L 20G vg_linux
 ```
 
 Create the home partition.
+
 ```
 # lvcreate -n lv_home -L 200G vg_linux
 ```
 
 Confirm that the logical volumes were created correctly.
+
 ```
 # lvdisplay
 ```
@@ -171,6 +195,7 @@ If you cannot find them, use the next commands to bring up the module for creati
 ```
 
 Confirm that the file systems were mounted correctly.
+
 ```
 # lsblk
 ```
@@ -178,16 +203,19 @@ Confirm that the file systems were mounted correctly.
 ## Rank the mirrors by speed
 
 Back up the existing `/etc/pacman.d/mirrorlist`:
+
 ```
 # cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 ```
 
 Run the following sed line to uncomment every mirror:
+
 ```
 # sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist.backup
 ```
 
 Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirrors:
+
 ```
 # rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
 ```
@@ -201,21 +229,25 @@ Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirror
 ## Configure the system
 
 ### Generate `fstab` file
+
 ```
 # genfstab -p /mnt > /mnt/etc/fstab
 ```
 
 ### Change root into the new system
+
 ```
 # arch-chroot /mnt
 ```
 
 ### Set the time zone
+
 ```
 # ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 ```
 
 ### Run `hwclock` to generate `/etc/adjtime`
+
 ```
 # hwclock --systohc --utc
 ```
@@ -223,6 +255,7 @@ Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirror
 ### Locale
 
 Edit the `/etc/locale.gen` file and uncomment the following locales
+
 ```
 en_US.UTF-8 UTF-8
 en_US ISO-8859-1
@@ -278,22 +311,25 @@ Include = /etc/pacman.d/mirrorlist
 ```
 # pacman -Syu
 
-# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd vim
+# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd
 ```
 
 ### Automatic switching of network profiles
 
 Find what your interfaces are called
+
 ```
 # ip link
 ```
 
 Package `ifplugd` for wired interfaces: After starting and enabling `netctl-ifplugd@interface.service` DHCP profiles are started/stopped when the network cable is plugged in and out.
+
 ```
 # systemctl enable netctl-ifplugd@interface.service
 ```
 
 Package `wpa_actiond` for wireless interfaces: After starting and enabling `netctl-auto@interface.service` profiles are started/stopped automatically as you move from the range of one network into the range of another network (roaming).
+
 ```
 # systemctl enable netctl-auto@interface.service
 ```
@@ -305,11 +341,13 @@ Package `wpa_actiond` for wireless interfaces: After starting and enabling `netc
 ```
 
 Run the `visudo` to edit the `/etc/sudoers` file
+
 ```
-# visudo
+# EDITOR=nano visudo
 ```
 
 Grant sudo access to users in the group wheel when enabled.
+
 ```
 ## Allows people in group wheel to run all commands
 # %wheel    ALL=(ALL)    ALL
@@ -330,6 +368,7 @@ Grant sudo access to users in the group wheel when enabled.
 ### Add lvm2 hook to mkinitcpio.conf for root on LVM
 
 Edit the file `/etc/mkinitcpio.conf` and insert `lvm2` between `block` and `filesystems` like so:
+
 ```
 HOOKS="base udev ... block lvm2 filesystems ..."
 ```
@@ -349,6 +388,7 @@ HOOKS="base udev ... block lvm2 filesystems ..."
 ### Create bootloader entry
 
 Create a boot entry in `/boot/loader/entries/arch.conf`
+
 ```
 title Arch Linux
 linux /vmlinuz-linux
@@ -357,6 +397,7 @@ options root=/dev/mapper/vg_linux-lv_root-root rw
 ```
 
 Create a default entry in `/boot/loader/loader.conf`
+
 ```
 timeout 2
 default arch
@@ -448,6 +489,7 @@ Install GNOME Tweak Tool
 ## References
 
 - [Arch Linux Installation guide](https://wiki.archlinux.org/index.php/installation_guide#Pre-installation)
+- [USB flash installation media](https://wiki.archlinux.org/index.php/USB_flash_installation_media)
 - [EFI System Partition](https://wiki.archlinux.org/index.php/EFI_System_Partition)
 - [Arch Linux Partitioning](https://wiki.archlinux.org/index.php/partitioning)
 - [Arch Linux LVM](https://wiki.archlinux.org/index.php/LVM)
