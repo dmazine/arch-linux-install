@@ -402,10 +402,10 @@ pacman -S xf86-video-amdgpu mesa mesa-libgl lib32-mesa-libgl mesa-vdpau lib32-me
 # nvidia-xconfig
 ```
 
-## Touchpad, mouse and keyboard
+## Touchpad
 
 ```
-# pacman -S xf86-input-synaptics xf86-input-mouse xf86-input-keyboard
+# pacman -S xf86-input-libinput
 ```
 
 ## Desktop Environment
@@ -421,7 +421,7 @@ Install GNOME desktop
 Enable `gdm.service` to start GDM at boot time
 
 ```
-# systemctl enable gdm.services
+# systemctl enable gdm.service
 ```
 
 Install GNOME Tweak Tool
@@ -461,3 +461,6 @@ Install GNOME Tweak Tool
 - [NVIDIA](https://wiki.archlinux.org/index.php/NVIDIA)
 - [GNOME](https://wiki.archlinux.org/index.php/GNOME)
 - [How to install Gnome on Arch Linux](http://www.muktware.io/how-to-install-gnome-on-arch-linux-arch-tutorial/)
+- [libinput](https://wiki.archlinux.org/index.php/Libinput#Touchpad_tapping)
+- [Touchpad Synaptics](https://wiki.archlinux.org/index.php/Touchpad_Synaptics)
+- [Dell Inspiron 5547](https://wiki.archlinux.org/index.php/Dell_Inspiron_5547#Hardware)
