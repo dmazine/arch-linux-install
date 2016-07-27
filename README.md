@@ -362,7 +362,7 @@ Grant sudo access to users in the group wheel when enabled.
 
 ```
 ## Allows people in group wheel to run all commands
-# %wheel    ALL=(ALL)    ALL
+%wheel    ALL=(ALL)    ALL
 ```
 
 ### Activate NTP Client
