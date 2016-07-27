@@ -362,6 +362,56 @@ timeout 2
 default arch
 ```
 
+## Create user
+
+```
+# useradd -m -g users -G wheel -s /bin/bash myuser
+# passwd myuser
+```
+
+## Install ACPI
+
+```
+# pacman -S acpi acpid
+# systemctl enable acpid.service
+```
+## Install Xorg
+
+```
+# pacman -S xorg-xinit xorg-utils xorg-server
+```
+
+## Audio driver
+
+```
+# pacman -S pulseaudio pulseaudio-alsa
+```
+
+Also install `lib32-libpulse` and `lib32-alsa-plugins` if you run a x86_64 system and want to have sound for 32-bit multilib programs like Wine, Skype and Steam.
+
+```
+# pacman -S lib32-libpulse lib32-alsa-plugins
+```
+
+## Video driver
+
+### Intel
+
+```
+# pacman -S xf86-video-intel mesa mesa-demos
+```
+
+### Nvidea
+
+```
+# pacman -S nvidia
+# nvidia-xconfig
+```
+
+### AMD
+
+
+
 ## Finish installation
 
 ```
@@ -381,3 +431,4 @@ default arch
 - [How much SWAP space on a 2-4GB system?](http://serverfault.com/questions/5841/how-much-swap-space-on-a-high-memory-system)
 - [I have 16GB RAM. Do I need 32GB swap?](http://askubuntu.com/a/49130)
 - [Swap partition in LVM?](http://unix.stackexchange.com/questions/144586/swap-partition-in-lvm)
+- [Installing AMD Catalyst drivers on Arch Linux](http://www.neuraladvance.com/installing-amd-catalyst-drivers-on-arch-linux.html)
