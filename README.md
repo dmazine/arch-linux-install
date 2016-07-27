@@ -439,7 +439,7 @@ default arch
 ### AMD
 
 ```
-pacman -S xf86-video-amdgpu mesa mesa-libgl lib32-mesa-libgl mesa-vdpau lib32-mesa-vdpau
+# pacman -S xf86-video-amdgpu mesa mesa-libgl lib32-mesa-libgl mesa-vdpau lib32-mesa-vdpau
 ```
 
 ### Intel
