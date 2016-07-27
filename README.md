@@ -405,7 +405,7 @@ Create a boot entry in `/boot/loader/entries/arch.conf`
 title Arch Linux
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
-options root=/dev/mapper/vg_linux-lv_root-root rw
+options root=/dev/mapper/vg_linux-lv_root rw
 ```
 
 Create a default entry in `/boot/loader/loader.conf`
@@ -431,16 +431,10 @@ default arch
 ## Install Xorg
 
 ```
-# pacman -S xorg-xinit xorg-utils xorg-server
+# pacman -S xorg-xinit xorg-utils xorg-server xorg-xrandr xterm
 ```
 
 ## Video driver
-
-### AMD
-
-```
-# pacman -S xf86-video-amdgpu mesa mesa-libgl lib32-mesa-libgl mesa-vdpau lib32-mesa-vdpau
-```
 
 ### Intel
 
@@ -448,11 +442,24 @@ default arch
 # pacman -S xf86-video-intel mesa mesa-libgl lib32-mesa-libgl vulkan-intel
 ```
 
+### AMD
+
+```
+# pacman -S xf86-video-amdgpu mesa mesa-libgl lib32-mesa-libgl mesa-vdpau lib32-mesa-vdpau
+```
+
 ### Nvidia
 
 ```
 # pacman -S nvidia nvidia-libgl
 # nvidia-xconfig
+```
+
+Check the list of attached graphic drivers
+
+```
+# startx
+# xrandr --listproviders
 ```
 
 ## Touchpad
@@ -468,19 +475,13 @@ default arch
 Install GNOME desktop
 
 ```
-# pacman -S gnome gnome-extra
+# pacman -S gnome gnome-extra gnome-tweak-tool
 ```
 
 Enable `gdm.service` to start GDM at boot time
 
 ```
 # systemctl enable gdm.service
-```
-
-Install GNOME Tweak Tool
-
-```
-# pacman -S gnome-tweak-tool
 ```
 
 ## Create user
