@@ -2,11 +2,19 @@
 
 ## Bootable USB
 
+### GNU/Linux
+
 Run the following command, replacing `/dev/sdx` with your drive, e.g. `/dev/sdb`.
 
 ```
 # dd bs=4M if=/path/to/archlinux.iso of=/dev/sdx status=progress && sync
 ```
+
+### Windows
+
+- Using [Rufus](https://rufus.akeo.ie/)
+
+Simply select the Arch Linux ISO, the USB drive you want to create the bootable Arch Linux onto and click start.
 
 ## Set the keyboard layout
 
