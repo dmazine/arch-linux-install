@@ -499,6 +499,22 @@ Enable `gdm.service` to start GDM at boot time
 # reboot
 ```
 
+## Yaourt
+
+Add the following repository in `/etc/pacman.conf`
+
+```
+[archlinuxfr]
+SigLevel = Never
+Server = http://repo.archlinux.fr/$arch
+```
+
+Update repository database and install Yaourt
+
+```
+# sudo pacman -Sy yaourt
+```
+
 ## References
 
 - [Arch Linux Installation guide](https://wiki.archlinux.org/index.php/installation_guide#Pre-installation)
@@ -519,3 +535,4 @@ Enable `gdm.service` to start GDM at boot time
 - [libinput](https://wiki.archlinux.org/index.php/Libinput#Touchpad_tapping)
 - [Touchpad Synaptics](https://wiki.archlinux.org/index.php/Touchpad_Synaptics)
 - [Dell Inspiron 5547](https://wiki.archlinux.org/index.php/Dell_Inspiron_5547#Hardware)
+- [How to install Yaourt on Arch Linux](http://www.ostechnix.com/install-yaourt-arch-linux/)
