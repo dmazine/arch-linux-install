@@ -1,4 +1,4 @@
-# Arch Linux Install
+# Arch Linux with UEFI Install 
 
 ## Bootable USB
 
