@@ -326,6 +326,22 @@ Include = /etc/pacman.d/mirrorlist
 # pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd
 ```
 
+### Install Yaourt
+
+Add the following repository in `/etc/pacman.conf`
+
+```
+[archlinuxfr]
+SigLevel = Never
+Server = http://repo.archlinux.fr/$arch
+```
+
+Update repository database and install Yaourt
+
+```
+# sudo pacman -Sy yaourt
+```
+
 ### Automatic switching of network profiles
 
 Find what your interfaces are called
@@ -497,22 +513,6 @@ Enable `gdm.service` to start GDM at boot time
 # exit
 # umount -R /mnt
 # reboot
-```
-
-## Yaourt
-
-Add the following repository in `/etc/pacman.conf`
-
-```
-[archlinuxfr]
-SigLevel = Never
-Server = http://repo.archlinux.fr/$arch
-```
-
-Update repository database and install Yaourt
-
-```
-# sudo pacman -Sy yaourt
 ```
 
 ## References
