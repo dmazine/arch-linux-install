@@ -318,6 +318,10 @@ It is recommended to also set the hostname in `/etc/hosts`:
 Include = /etc/pacman.d/mirrorlist
 ```
 
+### Color output
+
+Pacman has a color option. Uncomment the `Color` line in `/etc/pacman.conf`.
+
 ### Install basic software
 
 ```
@@ -429,13 +433,6 @@ Create a default entry in `/boot/loader/loader.conf`
 ```
 timeout 2
 default arch
-```
-
-## Install ACPI
-
-```
-# pacman -S acpi acpid
-# systemctl enable acpid.service
 ```
 
 ## Audio driver
