@@ -481,6 +481,14 @@ Check the list of attached graphic drivers
 # pacman -S xf86-input-libinput
 ```
 
+## Bluetooth
+
+```
+# pacman -S bluez bluez-utils
+
+# systemctl enable bluetooth
+```
+
 ## Desktop Environment
 
 ### GNOME
@@ -533,3 +541,4 @@ Enable `gdm.service` to start GDM at boot time
 - [Touchpad Synaptics](https://wiki.archlinux.org/index.php/Touchpad_Synaptics)
 - [Dell Inspiron 5547](https://wiki.archlinux.org/index.php/Dell_Inspiron_5547#Hardware)
 - [How to install Yaourt on Arch Linux](http://www.ostechnix.com/install-yaourt-arch-linux/)
+- [Bluetooth](https://wiki.archlinux.org/index.php/bluetooth)
