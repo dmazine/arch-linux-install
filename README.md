@@ -1,4 +1,4 @@
-# Arch Linux with UEFI Install 
+# Arch Linux with UEFI Install
 
 ## Bootable USB
 
@@ -327,7 +327,7 @@ Pacman has a color option. Uncomment the `Color` line in `/etc/pacman.conf`.
 ```
 # pacman -Syu
 
-# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd
+# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd openssh
 ```
 
 ### Install Yaourt
@@ -489,6 +489,12 @@ Check the list of attached graphic drivers
 # systemctl enable bluetooth
 ```
 
+## Media Transfer Protocol
+
+```
+pacman -S libmtp gvfs-mtp
+```
+
 ## Desktop Environment
 
 ### GNOME
@@ -542,3 +548,4 @@ Enable `gdm.service` to start GDM at boot time
 - [Dell Inspiron 5547](https://wiki.archlinux.org/index.php/Dell_Inspiron_5547#Hardware)
 - [How to install Yaourt on Arch Linux](http://www.ostechnix.com/install-yaourt-arch-linux/)
 - [Bluetooth](https://wiki.archlinux.org/index.php/bluetooth)
+- [MTP](https://wiki.archlinux.org/index.php/MTP)
