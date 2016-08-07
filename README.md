@@ -327,7 +327,7 @@ Pacman has a color option. Uncomment the `Color` line in `/etc/pacman.conf`.
 ```
 # pacman -Syu
 
-# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd coreutils openssh
+# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd mlocate openssh
 ```
 
 ### Install Yaourt
