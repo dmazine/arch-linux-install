@@ -495,6 +495,14 @@ Check the list of attached graphic drivers
 pacman -S libmtp gvfs-mtp
 ```
 
+## Network Manager
+
+```
+pacman -S networkmanager network-manager-applet dhclient
+
+systemctl enable NetworkManager.service 
+```
+
 ## Desktop Environment
 
 ### GNOME
@@ -509,13 +517,6 @@ Enable `gdm.service` to start GDM at boot time
 
 ```
 # systemctl enable gdm.service
-```
-
-## Network Manager Front-end
-
-```
-pacman -S network-manager-applet
-
 ```
 
 ## Create user
