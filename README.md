@@ -511,6 +511,13 @@ Enable `gdm.service` to start GDM at boot time
 # systemctl enable gdm.service
 ```
 
+## Network Manager Front-end
+
+```
+pacman -S network-manager-applet
+
+```
+
 ## Create user
 
 ```
