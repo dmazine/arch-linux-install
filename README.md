@@ -534,29 +534,29 @@ Install the network manager package and its GUI front-end.
 pacman -S networkmanager network-manager-applet
 ```
 
-Disable dhcpcd and netcl, as NetworkManager will replace both. So first let’s find our devices:
+Disable *dhcpcd* and *netcl*, as NetworkManager will replace both. So first let’s find our devices:
 
 ```
 ip link
 ```
 
-Anything starting with *enp* is an *ethernet* device.
+Anything starting with *enp* is an ethernet device.
 
-Anything starting with *wlp* is a *wireless* device.
+Anything starting with *wlp* is a wireless device.
 
-Disable *dhcpcd* on any *ethernet* devices (my device was listed as enp1s0):
+Disable *dhcpcd* on any ethernet devices (my device was listed as enp1s0):
 
 ```
 systemctl disable dhcpcd@enp1s0.service
 ```
 
-Disable netctl on any wireless devices (my device was listed as wlp2s0):
+Disable *netctl* on any wireless devices (my device was listed as wlp2s0):
 
 ```
 systemctl disable netctl-auto@wlp2s0.service
 ```
 
-Enable network manager:
+Enable Network Manager:
 
 ```
 systemctl enable NetworkManager.service
