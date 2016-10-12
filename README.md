@@ -495,14 +495,6 @@ Check the list of attached graphic drivers
 pacman -S libmtp gvfs-mtp
 ```
 
-## Network Manager
-
-```
-pacman -S networkmanager network-manager-applet dhclient
-
-systemctl enable NetworkManager.service 
-```
-
 ## Desktop Environment
 
 ### GNOME
@@ -534,6 +526,48 @@ Enable `gdm.service` to start GDM at boot time
 # reboot
 ```
 
+## Switch to Network Manager
+
+Install the network manager package and its GUI front-end.
+
+```
+pacman -S networkmanager network-manager-applet
+```
+
+Disable dhcpcd and netcl, as NetworkManager will replace both. So first let’s find our devices:
+
+```
+ip link
+```
+
+Anything starting with *enp* is an *ethernet* device.
+
+Anything starting with *wlp* is a *wireless* device.
+
+Disable *dhcpcd* on any *ethernet* devices (my device was listed as enp1s0):
+
+```
+systemctl disable dhcpcd@enp1s0.service
+```
+
+Disable netctl on any wireless devices (my device was listed as wlp2s0):
+
+```
+systemctl disable netctl-auto@wlp2s0.service
+```
+
+Enable network manager:
+
+```
+systemctl enable NetworkManager.service
+```
+
+Finally, reboot.
+
+```
+reboot
+```
+
 ## References
 
 - [Arch Linux Installation guide](https://wiki.archlinux.org/index.php/installation_guide#Pre-installation)
@@ -557,3 +591,4 @@ Enable `gdm.service` to start GDM at boot time
 - [How to install Yaourt on Arch Linux](http://www.ostechnix.com/install-yaourt-arch-linux/)
 - [Bluetooth](https://wiki.archlinux.org/index.php/bluetooth)
 - [MTP](https://wiki.archlinux.org/index.php/MTP)
+- [2016 Arch Linux NetworkManager / Wifi Setup guide.](http://gloriouseggroll.tv/142-2/)
