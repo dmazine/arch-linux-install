@@ -577,6 +577,19 @@ Finally, reboot.
 # modprobe vboxdrv
 ```
 
+### Printing Service
+
+```
+# pacman -S cups cups-pdf gtk3-print-backends system-config-printer
+# systemctl enable org.cups.cupsd.service
+```
+
+### HP Printers
+
+```
+# pacman -S hplip
+```
+
 ## References
 
 - [Arch Linux Installation guide](https://wiki.archlinux.org/index.php/installation_guide#Pre-installation)
