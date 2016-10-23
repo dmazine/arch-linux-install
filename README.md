@@ -495,6 +495,12 @@ Check the list of attached graphic drivers
 # pacman -S libmtp gvfs-mtp
 ```
 
+## NTFS file system including read and write support
+
+```
+# pacman -S ntfs-3g
+```
+
 ## Desktop Environment
 
 ### GNOME
