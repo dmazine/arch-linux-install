@@ -495,6 +495,12 @@ Check the list of attached graphic drivers
 # pacman -S libmtp gvfs-mtp
 ```
 
+## Automounting removable media or network shares
+
+```
+# pacman -S autofs
+```
+
 ## NTFS file system including read and write support
 
 ```
