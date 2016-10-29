@@ -612,6 +612,17 @@ Add users that will be authorized to access host USB devices in guest to the vbo
 # pacman -S hplip
 ```
 
+## Troubleshooting
+
+### Xorg backend
+
+The Wayland backend is used by default and the Xorg backend is used only if the Wayland backend cannot be started. As the Wayland backend has been [reported](https://bugzilla.redhat.com/show_bug.cgi?id=1199890) to cause problems for some users, use of the Xorg backend may be necessary.
+To use the Xorg backend by default, edit the `/etc/gdm/custom.conf` file and uncomment the following line:
+
+```
+#WaylandEnable=false
+```
+
 ## References
 
 - [Arch Linux Installation guide](https://wiki.archlinux.org/index.php/installation_guide#Pre-installation)
@@ -629,6 +640,7 @@ Add users that will be authorized to access host USB devices in guest to the vbo
 - [NVIDIA](https://wiki.archlinux.org/index.php/NVIDIA)
 - [GNOME](https://wiki.archlinux.org/index.php/GNOME)
 - [How to install Gnome on Arch Linux](http://www.muktware.io/how-to-install-gnome-on-arch-linux-arch-tutorial/)
+- [GDM](https://wiki.archlinux.org/index.php/GDM)
 - [libinput](https://wiki.archlinux.org/index.php/Libinput#Touchpad_tapping)
 - [Touchpad Synaptics](https://wiki.archlinux.org/index.php/Touchpad_Synaptics)
 - [Dell Inspiron 5547](https://wiki.archlinux.org/index.php/Dell_Inspiron_5547#Hardware)
