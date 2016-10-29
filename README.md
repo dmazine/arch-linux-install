@@ -584,9 +584,19 @@ Finally, reboot.
 
 ### VirtualBox
 
+Install the core packages.
 ```
 # pacman -S virtualbox virtualbox-host-modules-arch
-# modprobe vboxdrv
+```
+
+Load the VirtualBox kernel modules.
+```
+# modprobe vboxdrv boxnetadp vboxnetflt vboxpci
+```
+
+Add users that will be authorized to access host USB devices in guest to the vboxusers group.
+```
+# usermod -a -G vboxusers <login>
 ```
 
 ### Printing Service
