@@ -586,7 +586,7 @@ Finally, reboot.
 
 Install the core packages.
 ```
-# pacman -S virtualbox virtualbox-host-modules-arch
+# pacman -S virtualbox virtualbox-host-modules-arch virtualbox-guest-iso
 ```
 
 Load the VirtualBox kernel modules.
