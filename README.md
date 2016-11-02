@@ -612,6 +612,12 @@ Add users that will be authorized to access host USB devices in guest to the `vb
 # pacman -S hplip
 ```
 
+### Enable OpenSSH daemon
+
+```
+sudo systemctl enable sshd.socket
+```
+
 ## Troubleshooting
 
 ### Xorg backend
