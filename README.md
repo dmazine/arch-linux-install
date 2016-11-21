@@ -343,7 +343,7 @@ Server = http://repo.archlinux.fr/$arch
 Update repository database and install Yaourt
 
 ```
-# sudo pacman -Sy yaourt
+# pacman -Sy yaourt
 ```
 
 ### Automatic switching of network profiles
@@ -615,7 +615,32 @@ Add users that will be authorized to access host USB devices in guest to the `vb
 ### Enable OpenSSH daemon
 
 ```
-sudo systemctl enable sshd.socket
+# systemctl enable sshd.socket
+```
+
+## Tools
+
+### Docker
+
+Install the `docker` package.
+```
+# pacman -S docker
+```
+
+Next start and enable `docker.service`.
+```
+# systemctl start docker.service
+# systemctl enable docker.service
+```
+
+If you want to be able to run docker as a regular user, add yourself to the docker group.
+```
+# gpasswd -a user docker
+```
+
+Then re-login or to make your current user session aware of this new group.
+```
+# newgrp docker
 ```
 
 ## Troubleshooting
