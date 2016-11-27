@@ -186,6 +186,12 @@ If you cannot find them, use the next commands to bring up the module for creati
 
 ## Mount the partitions
 
+### Swap partition
+
+```
+# swapon /dev/mapper/vg_linux-lv_swap
+```
+
 ### Root partition
 
 ```
