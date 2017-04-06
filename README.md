@@ -529,6 +529,12 @@ Enable `gdm.service` to start GDM at boot time
 # systemctl enable gdm.service
 ```
 
+Enable tap-to-click
+
+```
+# sudo -u gdm gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+```
+
 ## Create user
 
 ```
