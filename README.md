@@ -531,12 +531,6 @@ Enable `gdm.service` to start GDM at boot time
 # systemctl enable gdm.service
 ```
 
-Enable tap-to-click
-
-```
-# sudo -u gdm gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
-```
-
 ## Create user
 
 ```
@@ -557,10 +551,10 @@ Enable tap-to-click
 Install the network manager package and its GUI front-end.
 
 ```
-# pacman -S networkmanager network-manager-applet
+# pacman -S networkmanager network-manager-applet dhclient
 ```
 
-Disable *dhcpcd* and *netcl*, as network manager will replace both. So first let’s find our devices:
+You must ensure that no other service that wants to configure the network is running; in fact, multiple networking services will conflict. So first let’s find our devices:
 
 ```
 # ip link
@@ -570,15 +564,16 @@ Anything starting with *enp* is an ethernet device.
 
 Anything starting with *wlp* is a wireless device.
 
-Disable *dhcpcd* on any ethernet devices (my device was listed as `enp1s0`):
+You can find a list of the currently running services with `systemctl --type=service` and then stop them.
 
 ```
-# systemctl disable dhcpcd@enp1s0.service
+# systemctl --type=service
 ```
 
-Disable *netctl* on any wireless devices  (my device was listed as `wlp2s0`):
+In my case, two network services have to be disabled.
 
 ```
+# systemctl disable netctl-ifplugd@enp1s0.service
 # systemctl disable netctl-auto@wlp2s0.service
 ```
 
@@ -593,6 +588,38 @@ Finally, reboot.
 ```
 # reboot
 ```
+
+## Enabling tap-to-click
+
+Tap-to-click is disabled in GDM (and GNOME) by default, but you can easily enable it with a dconf setting.
+
+If you want to do this under X, you have to first set up correct X server access permissions.
+
+```
+# xhost +SI:localuser:gdm
+```
+
+To directly enable tap-to-click, use:
+
+```
+# sudo -u gdm gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+```
+
+To check the if it was set correctly, use:
+
+```
+# sudo -u gdm gsettings get org.gnome.desktop.peripherals.touchpad tap-to-click
+```
+
+If you get the error `dconf-WARNING **: failed to commit changes to dconf: Error spawning command line`, make sure dbus is running:
+
+```
+# sudo -u gdm dbus-launch gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+```
+
+## SSD Optimization
+
+To be done...
 
 ## Install optional software
 
@@ -718,3 +745,5 @@ mkinitcpio -p linux
 - [Bluetooth](https://wiki.archlinux.org/index.php/bluetooth)
 - [MTP](https://wiki.archlinux.org/index.php/MTP)
 - [2016 Arch Linux NetworkManager / Wifi Setup guide.](http://gloriouseggroll.tv/142-2/)
+- [How to properly activate TRIM for your SSD on Linux: fstrim, lvm and dm-crypt](http://blog.neutrino.es/2013/howto-properly-activate-trim-for-your-ssd-on-linux-fstrim-lvm-and-dmcrypt/)
+- [SSDOptimization](https://wiki.debian.org/SSDOptimization)
