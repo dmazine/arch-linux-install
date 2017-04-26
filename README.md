@@ -59,6 +59,8 @@ In my case, I'm going to install Arch on `/dev/sda` and create two partitions:
 |sda1     |EFI System (ef00)|512mb               |Boot partition  |
 |sda2     |Linux LVM (8e00) |Remaining free space|LVM partition   |
 
+Note that the boot partition will be created with EFI System type since my motherboard fully supports UEFI mode. When booting in Legacy BIOS mode Linux filesystem partition type (8300) should be used.
+
 *See References below to find out the recommended swap size.*
 
 ### Create partitions
@@ -69,7 +71,7 @@ In my case, I'm going to install Arch on `/dev/sda` and create two partitions:
 
 Type `o` to create a new empty GUID partition table (GPT).
 
-Type `n` to create the boot partition.
+Type `n` to create the EFI partition.
 
 ```
 Partition number: 1
@@ -119,11 +121,11 @@ Confirm that the volume group was created correctly.
 
 I'm going to create three logical volumes:
 
-|Logical Volume|Size |Description     |
-|--------------|-----|----------------|
-|lv_swap       |24gb |Swap partition  |
-|lv_root       |20gb |Root partition  |
-|lv_home       |200gb|Home partition  |
+|Logical Volume|Size           |Description     |
+|--------------|---------------|----------------|
+|lv_swap       |24gb           |Swap partition  |
+|lv_root       |40gb           |Root partition  |
+|lv_home       |Remaining space|Home partition  |
 
 Create the swap partition.
 
@@ -134,13 +136,13 @@ Create the swap partition.
 Create the root partition.
 
 ```
-# lvcreate -n lv_root -L 20G vg_linux
+# lvcreate -n lv_root -L 40G vg_linux
 ```
 
 Create the home partition.
 
 ```
-# lvcreate -n lv_home -L 200G vg_linux
+# lvcreate -n lv_home -l 100%FREE vg_linux
 ```
 
 Confirm that the logical volumes were created correctly.
@@ -261,7 +263,7 @@ Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirror
 ### Set the time zone
 
 ```
-# ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+# ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 ```
 
 ### Run `hwclock` to generate `/etc/adjtime`
@@ -333,7 +335,7 @@ Pacman has a color option. Uncomment the `Color` line in `/etc/pacman.conf`.
 ```
 # pacman -Syu
 
-# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd mlocate openssh
+# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd mlocate openssh vim
 ```
 
 ### Install Yaourt
@@ -360,19 +362,19 @@ Find what your interfaces are called
 # ip link
 ```
 
-Package `ifplugd` for wired interfaces: After starting and enabling `netctl-ifplugd@interface.service` DHCP profiles are started/stopped when the network cable is plugged in and out.
+Package `ifplugd` for wired interfaces: After starting and enabling `netctl-ifplugd@<interface-name>.service` DHCP profiles are started/stopped when the network cable is plugged in and out.
 
 ```
-# systemctl enable netctl-ifplugd@interface.service
+# systemctl enable netctl-ifplugd@<interface-name>.service
 ```
 
-Package `wpa_actiond` for wireless interfaces: After starting and enabling `netctl-auto@interface.service` profiles are started/stopped automatically as you move from the range of one network into the range of another network (roaming).
+Package `wpa_actiond` for wireless interfaces: After starting and enabling `netctl-auto@<interface-name>.service` profiles are started/stopped automatically as you move from the range of one network into the range of another network (roaming).
 
 ```
-# systemctl enable netctl-auto@interface.service
+# systemctl enable netctl-auto@<interface-name>.service
 ```
 
-### Install and configure sudo:
+### Install and configure sudo
 
 ```
 # pacman -S sudo
@@ -664,6 +666,31 @@ To use the Xorg backend by default, edit the `/etc/gdm/custom.conf` file and unc
 
 ```
 #WaylandEnable=false
+```
+
+### Possibly missing firmware for module
+
+How to deal with initramfs’s rebuild warnings (after a kernel update) regarding “Possibly missing firmware for module“…
+When initramfs are being rebuild after a kernel update, some kernel warnings may appear, e.g.:
+```
+==> WARNING: Possibly missing firmware for module: wd719x
+==> WARNING: Possibly missing firmware for module: aic94xx
+```
+
+Search for firmware driver modules in AUR, e.g.:
+```
+yaourt -Ss wd719x
+yaourt -Ss aic94xx
+```
+
+Install those that were found, e.g.:
+```
+yaourt -S wd719x-firmware aic94xx-firmware
+```
+
+Recompile kernel:
+```
+mkinitcpio -p linux
 ```
 
 ## References
