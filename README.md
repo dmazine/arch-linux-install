@@ -605,6 +605,11 @@ To directly enable tap-to-click, use:
 # sudo -u gdm gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 ```
 
+If you prefer to do this with a GUI, use:
+
+# sudo -u gdm dconf-editor
+```
+
 To check the if it was set correctly, use:
 
 ```
@@ -619,7 +624,27 @@ If you get the error `dconf-WARNING **: failed to commit changes to dconf: Error
 
 ## SSD Optimization
 
+
+
 To be done...
+
+
+Enabling TRIM support on LVM
+
+Edit the LVM configuration file `/etc/lvm/lvm.conf` and enable the option `issue_discards`.
+
+```
+# [...]
+devices {
+   # [...]
+   issue_discards = 1
+   # [...]
+}
+# [...]
+```
+
+????? Note: On most setups you will have to rebuild your initramfs with update-initramfs -u (Debian and derivatives) or dracut -f (Redhat and derivatives) and reboot the machine after touching the configuration options of LVM or dm-crypt.
+
 
 ## Install optional software
 
@@ -664,19 +689,22 @@ Add users that will be authorized to access host USB devices in guest to the `vb
 ### Docker
 
 Install the `docker` package.
+
 ```
 # pacman -S docker
 ```
 
 Next start and enable `docker.service`.
+
 ```
 # systemctl start docker.service
 # systemctl enable docker.service
 ```
 
 If you want to be able to run docker as a regular user, add yourself to the docker group.
+
 ```
-# gpasswd -a user docker
+# gpasswd -a myuser docker
 ```
 
 Then re-login or to make your current user session aware of this new group.
