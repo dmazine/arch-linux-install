@@ -334,7 +334,6 @@ Pacman has a color option. Uncomment the `Color` line in `/etc/pacman.conf`.
 
 ```
 # pacman -Syu
-
 # pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd mlocate openssh vim
 ```
 
@@ -493,7 +492,6 @@ Check the list of attached graphic drivers
 
 ```
 # pacman -S bluez bluez-utils
-
 # systemctl enable bluetooth
 ```
 
@@ -607,6 +605,7 @@ To directly enable tap-to-click, use:
 
 If you prefer to do this with a GUI, use:
 
+```
 # sudo -u gdm dconf-editor
 ```
 
