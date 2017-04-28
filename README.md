@@ -622,14 +622,101 @@ If you get the error `dconf-WARNING **: failed to commit changes to dconf: Error
 # sudo -u gdm dbus-launch gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 ```
 
+## Enabling Hibernation
+
+In order to use hibernation, you need to create a swap partition or file. You will need to point the kernel to your swap using the `resume=` kernel parameter, which is configured via the boot loader. You will also need to configure the initramfs. This tells the kernel to attempt resuming from the specified swap in early userspace.
+
+The kernel parameter resume=swap_partition has to be used. Either the name the kernel assigns to the partition or its UUID can be used as swap_partition. For example:
+
+* `resume=/dev/sda1`
+
+* `resume=UUID=4209c845-f495-4c43-8a03-5363dd433153`
+
+* `resume=/dev/mapper/archVolumeGroup-archLogicVolume` -- example if using LVM
+
+The configuration depends on the used boot loader. The Arch Linux installation medium uses Syslinux for BIOS systems, and systemd-boot for UEFI systems.
+
+**Syslinux**
+
+Edit `/boot/syslinux/syslinux.cfg` and add them to the `APPEND` line:
+
+```
+APPEND ... resume=vg_linux-lv_swap
+```
+
+**systemd-boot**
+
+Edit `/boot/loader/entries/arch.conf` (assuming you set up your EFI System Partition) and add them to the options line:
+
+```
+options ... resume=vg_linux-lv_swap
+```
+
+**Configure the initramfs**
+
+* When an initramfs with the base hook is used, which is the default, the resume hook is required in `/etc/mkinitcpio.conf`. Whether by label or by UUID, the swap partition is referred to with a udev device node, so the resume hook must go after the udev hook. This example was made starting from the default hook configuration:
+
+```
+HOOKS="base udev resume autodetect modconf block filesystems keyboard fsck"
+```
+
+Note: LVM users should add the resume hook after lvm2.
+
+Remember to rebuild the initramfs for these changes to take effect.
+
+```
+# mkinitcpio -p linux
+```
+
+* When an initramfs with the systemd hook is used, a resume mechanism is already provided, and no further hooks need to be added.
+
 ## SSD Optimization
 
+Users need to be certain that their SSD supports TRIM before attempting to use it. To verify TRIM support, run:
 
+```
+# lsblk -D
+```
 
-To be done...
+And check the values of DISC-GRAN and DISC-MAX columns. Non-zero values indicate TRIM support.
 
+**Periodic TRIM**
 
-Enabling TRIM support on LVM
+While it is possible to enable continuous TRIM in Linux, this can actually negatively affect performance because of the additional overhead on normal file operations. A gentler alternative is to configure periodic TRIM. This configures the operating system to TRIM the drive on a schedule instead of as a necessary component of regular file operations. In almost all cases it provides the same benefits of continuous TRIM without the performance hit.
+
+Install the `util-linux` package.
+
+```
+# pacman -S util-linux
+```
+
+To schedule a weekly TRIM of all attached capable drives, enable the timer.
+
+```
+sudo systemctl enable fstrim.timer
+```
+
+**Continuous TRIM**
+
+Performing TRIM on every deletion can be costly and can have a negative impact on the performance of the drive.
+
+Using the discard option for a mount in `/etc/fstab` enables continuous TRIM in device operations.
+
+```
+/dev/sda2  /boot       ext4  defaults,noatime,discard   0  2
+/dev/sda1  /boot/efi   vfat  defaults,noatime,discard   0  2
+/dev/sda3  /           ext4  defaults,noatime,discard   0  2
+```
+
+Continuous TRIM can be disabled by removing the discard option for a mount in `/etc/fstab`.
+
+```
+/dev/sda2  /boot       ext4  defaults,noatime   0  2
+/dev/sda1  /boot/efi   vfat  defaults,noatime   0  2
+/dev/sda3  /           ext4  defaults,noatime   0  2
+```
+
+**Enabling TRIM support on LVM**
 
 Edit the LVM configuration file `/etc/lvm/lvm.conf` and enable the option `issue_discards`.
 
@@ -642,9 +729,6 @@ devices {
 }
 # [...]
 ```
-
-????? Note: On most setups you will have to rebuild your initramfs with update-initramfs -u (Debian and derivatives) or dracut -f (Redhat and derivatives) and reboot the machine after touching the configuration options of LVM or dm-crypt.
-
 
 ## Install optional software
 
@@ -775,3 +859,5 @@ mkinitcpio -p linux
 - [2016 Arch Linux NetworkManager / Wifi Setup guide.](http://gloriouseggroll.tv/142-2/)
 - [How to properly activate TRIM for your SSD on Linux: fstrim, lvm and dm-crypt](http://blog.neutrino.es/2013/howto-properly-activate-trim-for-your-ssd-on-linux-fstrim-lvm-and-dmcrypt/)
 - [SSDOptimization](https://wiki.debian.org/SSDOptimization)
+- [How To Configure Periodic TRIM for SSD Storage on Linux Servers](https://www.digitalocean.com/community/tutorials/how-to-configure-periodic-trim-for-ssd-storage-on-linux-servers)
+- [Arch Linux - SSD Trim on encrypted LVM volumes](http://ggarcia.me/2016/10/11/arch-linux-ssd-trim.html)
