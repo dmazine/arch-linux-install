@@ -731,6 +731,86 @@ devices {
 
 ## Install optional software
 
+### Enable OpenSSH daemon
+
+```
+# systemctl enable sshd.socket
+```
+
+### File index and search
+
+```
+# pacman -S mlocate
+# updatedb
+```
+
+### Printing Service
+
+```
+# pacman -S cups cups-pdf gtk3-print-backends system-config-printer
+# systemctl enable org.cups.cupsd.service
+```
+
+### HP Printers
+
+```
+# pacman -S hplip
+```
+
+### Archive formats
+
+```
+# pacman -S p7zip p7zip-plugins unrar tar rsync
+```
+
+### Media Codecs
+
+```
+# pacman -S exfat-utils fuse-exfat a52dec faac faad2 flac jasper lame libdca libdv gst-libav libmad libmpeg2 libtheora libvorbis libxv wavpack x264 xvidcore gstreamer0.10-plugins flashplugin libdvdcss libdvdread libdvdnav gecko-mediaplayer dvd+rw-tools dvdauthor dvgrab
+```
+
+### VLC Media Player
+
+```
+# pacman -S vlc
+```
+
+### Libre Office
+
+```
+# pacman -S libreoffice
+```
+
+### Wine
+
+```
+# pacman -S wine
+```
+
+### Oracle JAVA & OpenJDK
+
+```
+# yaourt jdk
+```
+
+### Chrome Web Browser
+
+```
+# yaourt -S google-chrome
+```
+
+### Firefox Web Browser
+
+```
+# yaourt -S firefox
+```
+
+### Skype
+
+```
+# yaourt -S skypeforlinux
+```
+
 ### VirtualBox
 
 Install the core packages.
@@ -747,27 +827,6 @@ Add users that will be authorized to access host USB devices in guest to the `vb
 ```
 # usermod -a -G vboxusers <login>
 ```
-
-### Printing Service
-
-```
-# pacman -S cups cups-pdf gtk3-print-backends system-config-printer
-# systemctl enable org.cups.cupsd.service
-```
-
-### HP Printers
-
-```
-# pacman -S hplip
-```
-
-### Enable OpenSSH daemon
-
-```
-# systemctl enable sshd.socket
-```
-
-## Tools
 
 ### Docker
 
@@ -860,3 +919,4 @@ mkinitcpio -p linux
 - [SSDOptimization](https://wiki.debian.org/SSDOptimization)
 - [How To Configure Periodic TRIM for SSD Storage on Linux Servers](https://www.digitalocean.com/community/tutorials/how-to-configure-periodic-trim-for-ssd-storage-on-linux-servers)
 - [Arch Linux - SSD Trim on encrypted LVM volumes](http://ggarcia.me/2016/10/11/arch-linux-ssd-trim.html)
+- [Arch Linux Post Installation (30 Things to do after Installing Arch Linux)](http://www.2daygeek.com/arch-linux-post-installation-30-things-to-do-after-installing-arch-linux/#)
