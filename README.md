@@ -623,9 +623,9 @@ If you get the error `dconf-WARNING **: failed to commit changes to dconf: Error
 
 ## Enabling Hibernation
 
-In order to use hibernation, you need to create a swap partition or file. You will need to point the kernel to your swap using the `resume=` kernel parameter, which is configured via the boot loader. You will also need to configure the initramfs. This tells the kernel to attempt resuming from the specified swap in early userspace.
+In order to use hibernation, you need to create a swap partition or file. You will need to point the kernel to your swap using the `resume=` kernel parameter, which is configured via the boot loader. You will also need to configure the `initramfs`. This tells the kernel to attempt resuming from the specified swap in early userspace.
 
-The kernel parameter resume=swap_partition has to be used. Either the name the kernel assigns to the partition or its UUID can be used as swap_partition. For example:
+The kernel parameter `resume=swap_partition` has to be used. Either the name the kernel assigns to the partition or its UUID can be used as swap_partition. For example:
 
 * `resume=/dev/sda1`
 
@@ -659,15 +659,15 @@ options ... resume=vg_linux-lv_swap
 HOOKS="base udev resume autodetect modconf block filesystems keyboard fsck"
 ```
 
-Note: LVM users should add the resume hook after lvm2.
+Note: LVM users should add the `resume` hook after `lvm2`.
 
-Remember to rebuild the initramfs for these changes to take effect.
+Remember to rebuild the `initramfs` for these changes to take effect.
 
 ```
 # mkinitcpio -p linux
 ```
 
-* When an initramfs with the systemd hook is used, a resume mechanism is already provided, and no further hooks need to be added.
+* When an `initramfs` with the `systemd` hook is used, a resume mechanism is already provided, and no further hooks need to be added.
 
 ## SSD Optimization
 
@@ -677,7 +677,7 @@ Users need to be certain that their SSD supports TRIM before attempting to use i
 # lsblk -D
 ```
 
-And check the values of DISC-GRAN and DISC-MAX columns. Non-zero values indicate TRIM support.
+And check the values of `DISC-GRAN` and `DISC-MAX` columns. Non-zero values indicate TRIM support.
 
 **Periodic TRIM**
 
@@ -692,7 +692,7 @@ Install the `util-linux` package.
 To schedule a weekly TRIM of all attached capable drives, enable the timer.
 
 ```
-sudo systemctl enable fstrim.timer
+# systemctl enable fstrim.timer
 ```
 
 **Continuous TRIM**
