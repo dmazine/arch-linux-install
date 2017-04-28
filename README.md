@@ -640,7 +640,7 @@ The configuration depends on the used boot loader. The Arch Linux installation m
 Edit `/boot/syslinux/syslinux.cfg` and add them to the `APPEND` line:
 
 ```
-APPEND ... resume=vg_linux-lv_swap
+APPEND root=/dev/mapper/vg_linux-lv_root rw resume=/dev/mapper/vg_linux-lv_swap
 ```
 
 **systemd-boot**
@@ -648,7 +648,7 @@ APPEND ... resume=vg_linux-lv_swap
 Edit `/boot/loader/entries/arch.conf` (assuming you set up your EFI System Partition) and add them to the options line:
 
 ```
-options ... resume=vg_linux-lv_swap
+options root=/dev/mapper/vg_linux-lv_root rw resume=/dev/mapper/vg_linux-lv_swap
 ```
 
 **Configure the initramfs**
