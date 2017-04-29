@@ -731,7 +731,7 @@ devices {
 
 ## Install optional software
 
-### Enable OpenSSH daemon
+### OpenSSH daemon
 
 ```
 # systemctl enable sshd.socket
@@ -760,13 +760,7 @@ devices {
 ### Archive formats
 
 ```
-# pacman -S p7zip p7zip-plugins unrar tar rsync
-```
-
-### Media Codecs
-
-```
-# pacman -S exfat-utils fuse-exfat a52dec faac faad2 flac jasper lame libdca libdv gst-libav libmad libmpeg2 libtheora libvorbis libxv wavpack x264 xvidcore gstreamer0.10-plugins flashplugin libdvdcss libdvdread libdvdnav gecko-mediaplayer dvd+rw-tools dvdauthor dvgrab
+# pacman -S p7zip unrar tar rsync
 ```
 
 ### VLC Media Player
@@ -787,28 +781,64 @@ devices {
 # pacman -S wine
 ```
 
-### Oracle JAVA & OpenJDK
+### Chromium Web Browser
 
 ```
-# yaourt jdk
-```
-
-### Chrome Web Browser
-
-```
-# yaourt -S google-chrome
+# pacman -S chromium
 ```
 
 ### Firefox Web Browser
 
 ```
-# yaourt -S firefox
+# pacman -S firefox
+```
+
+### Java
+
+```
+# pacman -S jdk8-openjdk openjdk8-doc
 ```
 
 ### Skype
 
 ```
 # yaourt -S skypeforlinux
+```
+
+### Spotify
+
+```
+# yaourt -S spotify
+```
+
+### Eclipse
+
+```
+# pacman -S eclipse-jee
+```
+
+### NodeJS
+
+```
+# pacman -S nodejs
+```
+
+### Sublime Text 3
+
+```
+# yaourt -S sublime-text-dev
+```
+
+### DBeaver
+
+```
+# yaourt -S dbeaver
+```
+
+### SoapUI
+
+```
+# yaourt -S soapui
 ```
 
 ### VirtualBox
@@ -850,6 +880,7 @@ If you want to be able to run docker as a regular user, add yourself to the dock
 ```
 
 Then re-login or to make your current user session aware of this new group.
+
 ```
 # newgrp docker
 ```
