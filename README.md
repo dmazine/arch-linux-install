@@ -811,6 +811,21 @@ devices {
 # yaourt -S spotify
 ```
 
+If you encounter the following error while installing, the public key needs to be downloaded.
+
+```
+==> Verifying source file signatures with gpg...
+    curl-7.54.0.tar.gz ... FAILED (unknown public key 5CC908FDB71E12C2)
+==> ERROR: One or more PGP signatures could not be verified!
+==> ERROR: Makepkg was unable to build libcurl-openssl-1.0.
+```
+
+To download the public key execute the following command:
+
+```
+# gpg --recv-keys 5CC908FDB71E12C2
+```
+
 ### Eclipse
 
 ```
