@@ -1,4 +1,4 @@
-# Arch Linux with UEFI Install
+# Arch Linux Installation Guide on a UEFI system
 
 ## Bootable USB
 
@@ -20,7 +20,9 @@ Simply select the Arch Linux ISO, the USB drive you want to create the bootable 
 
 Just download the Arch Linux ISO, and with local administrator rights use the USBwriter utility to write to your USB flash memory
 
-## Set the keyboard layout
+## Pre-Installation
+
+### Set the keyboard layout
 
 ```
 # loadkeys br-abnt2
@@ -28,27 +30,38 @@ Just download the Arch Linux ISO, and with local administrator rights use the US
 
 Available choices can be listed with ls `/usr/share/kbd/keymaps/**/*.map.gz`.
 
-## Verify the boot mode
+### Verify the boot mode
+
+If UEFI mode is enabled on an UEFI motherboard, Archiso will boot Arch Linux accordingly via systemd-boot. To verify this, list the efivars directory:
 
 ```
 # ls /sys/firmware/efi/efivars
 ```
 
-## Connect to the Internet
+If the directory does not exist, the system may be booted in BIOS or CSM mode. Refer to your motherboard's manual for details.
+
+### Connect to the Internet
+
+The installation image enables the dhcpcd daemon on boot for wired devices, and will attempt to start a connection. Verify internet connectivity is available, for example with ping:
+
+```
+ping -c 3 www.google.com
+```
+
+`wifi-menu` can be used to connect to a wireless network:
 
 ```
 wifi-menu
 ```
 
-Test it using `ping -c 3 www.google.com`.
-
-## Update the system clock
+### Update the system clock
 
 ```
 # timedatectl set-ntp true
+# systemctl enable systemd-timesyncd
 ```
 
-## Partition the disks
+### Partition the disks
 
 Identify the disk names with `lsblk` (results ending in rom, loop or airoot can be ignored).
 
@@ -59,11 +72,11 @@ In my case, I'm going to install Arch on `/dev/sda` and create two partitions:
 |sda1     |EFI System (ef00)|512mb               |Boot partition  |
 |sda2     |Linux LVM (8e00) |Remaining free space|LVM partition   |
 
-Note that the boot partition will be created with EFI System type since my motherboard fully supports UEFI mode. When booting in Legacy BIOS mode Linux filesystem partition type (8300) should be used.
+Note that the boot partition will be created with EFI System type since Arch will be installed on a motherboard that fully supports UEFI mode.
 
 *See References below to find out the recommended swap size.*
 
-### Create partitions
+#### Create partitions
 
 ```
 # gdisk /dev/sda
@@ -93,7 +106,7 @@ Type `p` to print the partition table and confirm that it was created correctly.
 
 Type `w` to write the partition table to disk and exit.
 
-### Create LVM physical volume
+#### Create LVM physical volume
 
 ```
 # pvcreate /dev/sda2
@@ -105,7 +118,7 @@ Confirm that the physical volume was created correctly.
 # pvdisplay
 ```
 
-### Create LVM volume group
+#### Create LVM volume group
 
 ```
 # vgcreate vg_linux /dev/sda2
@@ -117,7 +130,7 @@ Confirm that the volume group was created correctly.
 # vgdisplay
 ```
 
-### Create LVM logical volumes
+#### Create LVM logical volumes
 
 I'm going to create three logical volumes:
 
@@ -160,54 +173,54 @@ If you cannot find them, use the next commands to bring up the module for creati
 # vgchange -ay
 ```
 
-## Format the partitions
+### Format the partitions
 
-### EFI System Partition (ESP)
+#### EFI System Partition (ESP)
 
 ```
 # mkfs.fat -F32 /dev/sda1
 ```
 
-### Swap partition
+#### Swap partition
 
 ```
 # mkswap /dev/mapper/vg_linux-lv_swap
 ```
 
-### Root partition
+#### Root partition
 
 ```
 # mkfs.ext4 /dev/mapper/vg_linux-lv_root
 ```
 
-### Home partition
+#### Home partition
 
 ```
 # mkfs.ext4 /dev/mapper/vg_linux-lv_home
 ```
 
-## Mount the partitions
+### Mount the partitions
 
-### Swap partition
+#### Swap partition
 
 ```
 # swapon /dev/mapper/vg_linux-lv_swap
 ```
 
-### Root partition
+#### Root partition
 
 ```
 # mount /dev/mapper/vg_linux-lv_root /mnt
 ```
 
-### Home partition
+#### Home partition
 
 ```
 # mkdir /mnt/home
 # mount /dev/mapper/vg_linux-lv_home /mnt/home
 ```
 
-### EFI System Partition (ESP)
+#### Boot Partition
 
 ```
 # mkdir /mnt/boot
@@ -220,7 +233,9 @@ Confirm that the file systems were mounted correctly.
 # lsblk
 ```
 
-## Rank the mirrors by speed
+## Installation
+
+### Rank the mirrors by speed
 
 Back up the existing `/etc/pacman.d/mirrorlist`:
 
@@ -240,7 +255,7 @@ Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirror
 # rankmirrors -n 6 /etc/pacman.d/mirrorlist.backup > /etc/pacman.d/mirrorlist
 ```
 
-## Install the base system
+### Install the base system
 
 ```
 # pacstrap /mnt base base-devel
@@ -263,7 +278,7 @@ Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirror
 ### Set the time zone
 
 ```
-# ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+# ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 ```
 
 ### Run `hwclock` to generate `/etc/adjtime`
@@ -315,87 +330,35 @@ It is recommended to also set the hostname in `/etc/hosts`:
 #
 
 #<ip-address>    <hostname.domain.org>    <hostname>
-127.0.0.1        localhost.localdomain    localhost    myhostname
-::1              localhost.localdomain    localhost    myhostname
+127.0.0.1        localhost.localdomain    localhost
+::1              localhost.localdomain    localhost
+127.0.0.1        myhostname.localdomain   myhostname
 ```
 
-### Enable multilib repository in `/etc/pacman.conf`
+### Network configuration
+
+The basic installation procedure typically has a functional network configuration. 
+
+For Wireless configuration, install the `iw` and `wpa_supplicant` packages, as well as needed firmware packages. Optionally install `dialog` for usage of `wifi-menu`.
 
 ```
-[multilib]
-Include = /etc/pacman.d/mirrorlist
+# pacman -S iw wpa_supplicant dialog
 ```
 
-### Color output
+### Initramfs
 
-Pacman has a color option. Uncomment the `Color` line in `/etc/pacman.conf`.
+Creating a new initramfs is usually not required, because `mkinitcpio` was run on installation of the linux package with `pacstrap`. However, since the root filesystem is on LVM, it will be needed to enable the appropriate `mkinitcpio` hooks, otherwise your system might not boot.
 
-### Install basic software
-
-```
-# pacman -Syu
-# pacman -S bash-completion iw wpa_supplicant dialog wireless_tools rfkill wpa_actiond ifplugd mlocate openssh vim
-```
-
-### Install Yaourt
-
-Add the following repository in `/etc/pacman.conf`
+Edit the file `/etc/mkinitcpio.conf` and insert `lvm2` between block and filesystems like so:
 
 ```
-[archlinuxfr]
-SigLevel = Never
-Server = http://repo.archlinux.fr/$arch
+HOOKS="base udev ... block lvm2 filesystems"
 ```
 
-Update repository database and install Yaourt
+Recreate the initramfs image:
 
 ```
-# pacman -Sy yaourt
-```
-
-### Automatic switching of network profiles
-
-Find what your interfaces are called
-
-```
-# ip link
-```
-
-Package `ifplugd` for wired interfaces: After starting and enabling `netctl-ifplugd@<interface-name>.service` DHCP profiles are started/stopped when the network cable is plugged in and out.
-
-```
-# systemctl enable netctl-ifplugd@<interface-name>.service
-```
-
-Package `wpa_actiond` for wireless interfaces: After starting and enabling `netctl-auto@<interface-name>.service` profiles are started/stopped automatically as you move from the range of one network into the range of another network (roaming).
-
-```
-# systemctl enable netctl-auto@<interface-name>.service
-```
-
-### Install and configure sudo
-
-```
-# pacman -S sudo
-```
-
-Run the `visudo` to edit the `/etc/sudoers` file
-
-```
-# EDITOR=nano visudo
-```
-
-Grant sudo access to users in the group wheel when enabled.
-
-```
-## Allows people in group wheel to run all commands
-%wheel    ALL=(ALL)    ALL
-```
-
-### Activate NTP Client
-
-```
-# systemctl enable systemd-timesyncd
+# mkinitcpio -p linux
 ```
 
 ### Set root password
@@ -404,27 +367,15 @@ Grant sudo access to users in the group wheel when enabled.
 # passwd
 ```
 
-### Add lvm2 hook to mkinitcpio.conf for root on LVM
+### Boot loader
 
-Edit the file `/etc/mkinitcpio.conf` and insert `lvm2` between `block` and `filesystems` like so:
-
-```
-HOOKS="base udev ... block lvm2 filesystems ..."
-```
-
-### Create initramfs
-
-```
-# mkinitcpio -p linux
-```
-
-### Install bootloader
+Install the boot loader.
 
 ```
 # bootctl install
 ```
 
-### Create bootloader entry
+Arch will be installed on a motherboard that fully supports UEFI mode, thus Arch Linux installation medium uses `systemd-boot` boot manager.
 
 Create a boot entry in `/boot/loader/entries/arch.conf`
 
@@ -435,241 +386,56 @@ initrd /initramfs-linux.img
 options root=/dev/mapper/vg_linux-lv_root rw
 ```
 
-Create a default entry in `/boot/loader/loader.conf`
+Update the default entry in `/boot/loader/loader.conf`
 
 ```
-timeout 2
+timeout 1
 default arch
 ```
 
-## Audio driver
+If you have an Intel CPU, install the `intel-ucode` package in addition, and enable microcode updates.
 
 ```
-# pacman -S pulseaudio pulseaudio-alsa lib32-libpulse lib32-alsa-plugins
+# pacman -S intel-ucode
 ```
 
-## Install Xorg
+Use the initrd option twice in `/boot/loader/entries/arch.conf`.
 
 ```
-# pacman -S xorg-xinit xorg-utils xorg-server xorg-xrandr xterm
+title Arch Linux
+linux /vmlinuz-linux
+initrd /intel-ucode.img
+initrd /initramfs-linux.img
+options ...
 ```
 
-## Video driver
+### Enable Hibernation (Optional)
 
-### Intel
+In order to use hibernation, you will need to point the kernel to your swap using the `resume=` kernel parameter, which is configured via the boot loader. The configuration depends on the used boot loader.
 
-```
-# pacman -S xf86-video-intel mesa mesa-libgl lib32-mesa-libgl vulkan-intel
-```
+Arch will be installed on a motherboard that fully supports UEFI mode, thus Arch Linux installation medium uses `systemd-boot` boot manager.
 
-### AMD
-
-```
-# pacman -S xf86-video-amdgpu mesa mesa-libgl lib32-mesa-libgl mesa-vdpau lib32-mesa-vdpau
-```
-
-### Nvidia
-
-```
-# pacman -S nvidia nvidia-libgl
-# nvidia-xconfig
-```
-
-Check the list of attached graphic drivers
-
-```
-# startx
-# xrandr --listproviders
-```
-
-## Touchpad
-
-```
-# pacman -S xf86-input-libinput
-```
-
-## Bluetooth
-
-```
-# pacman -S bluez bluez-utils
-# systemctl enable bluetooth
-```
-
-## Media Transfer Protocol
-
-```
-# pacman -S libmtp gvfs-mtp
-```
-
-## Automounting removable media or network shares
-
-```
-# pacman -S autofs
-```
-
-## NTFS file system including read and write support
-
-```
-# pacman -S ntfs-3g
-```
-
-## Desktop Environment
-
-### GNOME
-
-Install GNOME desktop
-
-```
-# pacman -S gnome gnome-extra gnome-tweak-tool
-```
-
-Enable `gdm.service` to start GDM at boot time
-
-```
-# systemctl enable gdm.service
-```
-
-## Create user
-
-```
-# useradd -m -g users -G wheel -s /bin/bash myuser
-# passwd myuser
-```
-
-## Finish installation
-
-```
-# exit
-# umount -R /mnt
-# reboot
-```
-
-## Switch to Network Manager
-
-Install the network manager package and its GUI front-end.
-
-```
-# pacman -S networkmanager network-manager-applet dhclient
-```
-
-You must ensure that no other service that wants to configure the network is running; in fact, multiple networking services will conflict. So first let’s find our devices:
-
-```
-# ip link
-```
-
-Anything starting with *enp* is an ethernet device.
-
-Anything starting with *wlp* is a wireless device.
-
-You can find a list of the currently running services with `systemctl --type=service` and then stop them.
-
-```
-# systemctl --type=service
-```
-
-In my case, two network services have to be disabled.
-
-```
-# systemctl disable netctl-ifplugd@enp1s0.service
-# systemctl disable netctl-auto@wlp2s0.service
-```
-
-Enable network manager:
-
-```
-# systemctl enable NetworkManager.service
-```
-
-Finally, reboot.
-
-```
-# reboot
-```
-
-## Enabling tap-to-click
-
-Tap-to-click is disabled in GDM (and GNOME) by default, but you can easily enable it with a dconf setting.
-
-If you want to do this under X, you have to first set up correct X server access permissions.
-
-```
-# xhost +SI:localuser:gdm
-```
-
-To directly enable tap-to-click, use:
-
-```
-# sudo -u gdm gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
-```
-
-If you prefer to do this with a GUI, use:
-
-```
-# sudo -u gdm dconf-editor
-```
-
-To check the if it was set correctly, use:
-
-```
-# sudo -u gdm gsettings get org.gnome.desktop.peripherals.touchpad tap-to-click
-```
-
-If you get the error `dconf-WARNING **: failed to commit changes to dconf: Error spawning command line`, make sure dbus is running:
-
-```
-# sudo -u gdm dbus-launch gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
-```
-
-## Enabling Hibernation
-
-In order to use hibernation, you need to create a swap partition or file. You will need to point the kernel to your swap using the `resume=` kernel parameter, which is configured via the boot loader. You will also need to configure the `initramfs`. This tells the kernel to attempt resuming from the specified swap in early userspace.
-
-The kernel parameter `resume=swap_partition` has to be used. Either the name the kernel assigns to the partition or its UUID can be used as swap_partition. For example:
-
-* `resume=/dev/sda1`
-
-* `resume=UUID=4209c845-f495-4c43-8a03-5363dd433153`
-
-* `resume=/dev/mapper/archVolumeGroup-archLogicVolume` -- example if using LVM
-
-The configuration depends on the used boot loader. The Arch Linux installation medium uses Syslinux for BIOS systems, and systemd-boot for UEFI systems.
-
-**Syslinux**
-
-Edit `/boot/syslinux/syslinux.cfg` and add them to the `APPEND` line:
-
-```
-APPEND root=/dev/mapper/vg_linux-lv_root rw resume=/dev/mapper/vg_linux-lv_swap
-```
-
-**systemd-boot**
-
-Edit `/boot/loader/entries/arch.conf` (assuming you set up your EFI System Partition) and add them to the options line:
+Edit the `/boot/loader/entries/arch.conf` file and add the `resume=` kernel parameter to the options line:
 
 ```
 options root=/dev/mapper/vg_linux-lv_root rw resume=/dev/mapper/vg_linux-lv_swap
 ```
 
-**Configure the initramfs**
+It will be also needed to configure the `initramfs`. This tells the kernel to attempt resuming from the specified swap in early userspace.
 
-* When an initramfs with the base hook is used, which is the default, the resume hook is required in `/etc/mkinitcpio.conf`. Whether by label or by UUID, the swap partition is referred to with a udev device node, so the resume hook must go after the udev hook. This example was made starting from the default hook configuration:
+Edit the `/etc/mkinitcpio.conf` file and add the `resume` hook. Whether by label or by UUID, the swap partition is referred to with a udev device node, so the resume hook must go after the udev hook. LVM users should add the `resume` hook after `lvm2`.
 
 ```
-HOOKS="base udev resume autodetect modconf block filesystems keyboard fsck"
+HOOKS="base udev autodetect modconf block lvm2 resume filesystems keyboard fsck"
 ```
 
-Note: LVM users should add the `resume` hook after `lvm2`.
-
-Remember to rebuild the `initramfs` for these changes to take effect.
+Recreate the initramfs image:
 
 ```
 # mkinitcpio -p linux
 ```
 
-* When an `initramfs` with the `systemd` hook is used, a resume mechanism is already provided, and no further hooks need to be added.
-
-## SSD Optimization
+### SSD Optimization (Optional)
 
 Users need to be certain that their SSD supports TRIM before attempting to use it. To verify TRIM support, run:
 
@@ -729,11 +495,218 @@ devices {
 # [...]
 ```
 
-## Install optional software
+## Reboot
 
-### OpenSSH daemon
+Exit the chroot environment:
 
 ```
+# exit
+```
+
+Unmount all the partitions:
+
+```
+# umount -R /mnt
+```
+
+Restart the machine:
+
+```
+# reboot
+```
+
+## Post-installation
+
+### Create user
+
+```
+# useradd -m -g users -G wheel -s /bin/bash myuser
+# passwd myuser
+```
+
+### Install and configure sudo
+
+```
+# pacman -S sudo
+```
+
+Run the `visudo` to edit the `/etc/sudoers` file
+
+```
+# EDITOR=nano visudo
+```
+
+Grant sudo access to users in the group wheel when enabled.
+
+```
+## Allows people in group wheel to run all commands
+%wheel    ALL=(ALL)    ALL
+```
+
+### Enable multilib repository in `/etc/pacman.conf`
+
+```
+[multilib]
+Include = /etc/pacman.d/mirrorlist
+```
+
+Pacman has a color option. Uncomment the `Color` line in `/etc/pacman.conf` to enable color output in console.
+
+### Install Yaourt
+
+Add the following repository in `/etc/pacman.conf`
+
+```
+[archlinuxfr]
+SigLevel = Never
+Server = http://repo.archlinux.fr/$arch
+```
+
+Update repository database and install Yaourt
+
+```
+# pacman -Sy yaourt
+```
+
+### Display driver
+
+#### Intel
+
+```
+# pacman -S mesa lib32-mesa xf86-video-intel vulkan-intel
+```
+
+#### AMD
+
+```
+# pacman -S xf86-video-amdgpu lib32-mesa mesa-vdpau lib32-mesa-vdpau
+```
+
+#### Nvidia
+
+```
+# pacman -S nvidia nvidia-libgl
+# nvidia-xconfig
+```
+
+### Audio driver
+
+```
+# pacman -S pulseaudio pulseaudio-alsa lib32-libpulse lib32-alsa-plugins
+```
+
+### Bluetooth
+
+```
+# pacman -S bluez bluez-utils
+# systemctl enable bluetooth
+```
+
+### Automounting removable media or network shares
+
+```
+# pacman -S autofs
+```
+
+### NTFS file system including read and write support
+
+```
+# pacman -S ntfs-3g
+```
+
+### Install Xorg
+
+```
+# pacman -S xorg-xinit xorg-utils xorg-server xorg-xrandr xterm
+```
+
+### Desktop Environment
+
+Install GNOME desktop
+
+```
+# pacman -S gnome
+```
+
+Enable `gdm.service` to start GDM at boot time
+
+```
+# systemctl enable gdm.service
+```
+
+Tap-to-click is disabled in GDM (and GNOME) by default, but you can easily enable it with a dconf setting.
+
+To enable tap-to-click, use:
+
+```
+# sudo -u gdm gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+```
+
+If you get the error `dconf-WARNING **: failed to commit changes to dconf: Error spawning command line`, make sure dbus is running:
+
+```
+# sudo -u gdm dbus-launch gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+```
+
+To check the if it was set correctly, use:
+
+```
+# sudo -u gdm gsettings get org.gnome.desktop.peripherals.touchpad tap-to-click
+```
+
+### Network Manager
+
+Install the network manager package and its GUI front-end.
+
+```
+# pacman -S networkmanager network-manager-applet dhclient
+```
+
+You must ensure that no other service that wants to configure the network is running; in fact, multiple networking services will conflict. So first let’s find our devices:
+
+```
+# ip link
+```
+
+Anything starting with *enp* is an ethernet device.
+
+Anything starting with *wlp* is a wireless device.
+
+You can find a list of the currently running services with `systemctl --type=service` and then stop them.
+
+```
+# systemctl --type=service
+```
+
+In my case, one network service have to be disabled.
+
+```
+# systemctl disable netctl-ifplugd@enp1s0.service
+# systemctl disable netctl-auto@wlp2s0.service
+```
+
+Enable network manager:
+
+```
+# systemctl enable NetworkManager.service
+```
+
+### VLC Media Player
+
+```
+# pacman -S vlc
+```
+
+### VI Improved
+
+```
+# pacman -S vim
+```
+
+### OpenSSH
+
+```
+# pacman -S openssh
 # systemctl enable sshd.socket
 ```
 
@@ -747,7 +720,7 @@ devices {
 ### Printing Service
 
 ```
-# pacman -S cups cups-pdf gtk3-print-backends system-config-printer
+# pacman -S cups cups-pdf system-config-printer
 # systemctl enable org.cups.cupsd.service
 ```
 
@@ -763,22 +736,122 @@ devices {
 # pacman -S p7zip unrar tar rsync
 ```
 
-### VLC Media Player
+### Brasero
+
+CD/DVD mastering tool.
 
 ```
-# pacman -S vlc
+# pacman -S brasero
+```
+
+### DConf Editor
+
+dconf Editor.
+
+```
+# pacman -S dconf-editor
+```
+
+### Evolution
+
+Manage your email, contacts and schedule.
+
+```
+# pacman -S evolution
+```
+
+### File roller
+
+Create and modify archives
+
+```
+# pacman -S file-roller
+```
+
+### GNOME Calendar
+
+Simple and beautiful calendar application designed to perfectly fit the GNOME desktop.
+
+```
+# pacman -S gnome-calendar
+```
+
+### GEdit
+
+GNOME Text Editor.
+
+```
+# pacman -S gedit
+```
+
+### GNOME Clocks
+
+Clocks applications for GNOME.
+
+```
+# pacman -S gnome-clocks
+```
+
+### GNOME Nettol
+
+Graphical interface for various networking tools.
+
+```
+# pacman -S gnome-nettool
+```
+
+### GNOME Photos
+
+Access, organize, and share your photos on GNOME.
+
+```
+# pacman -S gnome-photos
+```
+
+### GNOME Sound Recorder
+
+A utility to make simple audio recording from your GNOME desktop.
+
+```
+# pacman -S gnome-sound-recorder
+```
+
+### GNOME Tweak Tool
+
+Customize advanced GNOME 3 options.
+
+```
+# pacman -S gnome-tweak-tool
+```
+
+### Nautilus Send To
+
+Easily send files via mail.
+
+```
+# pacman -S nautilus-sendto
+```
+
+### GNOME Seahorse
+
+GNOME application for managing PGP keys.
+
+```
+# pacman -S seahorse
+```
+
+### GNOME Vinagre
+
+A VNC Client for the GNOME desktop.
+
+```
+# pacman -S vinagre
 ```
 
 ### Libre Office
 
 ```
 # pacman -S libreoffice
-```
-
-### Wine
-
-```
-# pacman -S wine
 ```
 
 ### Chromium Web Browser
@@ -859,16 +932,19 @@ To download the public key execute the following command:
 ### VirtualBox
 
 Install the core packages.
+
 ```
 # pacman -S virtualbox virtualbox-host-modules-arch virtualbox-guest-iso
 ```
 
 Load the VirtualBox kernel modules.
+
 ```
 # modprobe vboxdrv boxnetadp vboxnetflt vboxpci
 ```
 
 Add users that will be authorized to access host USB devices in guest to the `vboxusers` group.
+
 ```
 # usermod -a -G vboxusers <login>
 ```
@@ -915,23 +991,27 @@ To use the Xorg backend by default, edit the `/etc/gdm/custom.conf` file and unc
 
 How to deal with initramfs’s rebuild warnings (after a kernel update) regarding “Possibly missing firmware for module“…
 When initramfs are being rebuild after a kernel update, some kernel warnings may appear, e.g.:
+
 ```
 ==> WARNING: Possibly missing firmware for module: wd719x
 ==> WARNING: Possibly missing firmware for module: aic94xx
 ```
 
 Search for firmware driver modules in AUR, e.g.:
+
 ```
 yaourt -Ss wd719x
 yaourt -Ss aic94xx
 ```
 
 Install those that were found, e.g.:
+
 ```
 yaourt -S wd719x-firmware aic94xx-firmware
 ```
 
 Recompile kernel:
+
 ```
 mkinitcpio -p linux
 ```
