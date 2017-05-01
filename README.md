@@ -940,7 +940,7 @@ Install the core packages.
 Load the VirtualBox kernel modules.
 
 ```
-# modprobe vboxdrv boxnetadp vboxnetflt vboxpci
+# modprobe vboxdrv vboxnetadp vboxnetflt vboxpci
 ```
 
 Add users that will be authorized to access host USB devices in guest to the `vboxusers` group.
