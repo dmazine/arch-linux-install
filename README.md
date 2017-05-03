@@ -698,12 +698,6 @@ We can see that there are two graphic cards: Intel, the integrated card (id 0x7d
 # pacman -S ntfs-3g
 ```
 
-### Install Xorg
-
-```
-# pacman -S xorg-xinit xorg-utils xorg-server xorg-xrandr xterm
-```
-
 ### Desktop Environment
 
 Install GNOME desktop
@@ -850,7 +844,7 @@ Then re-login or to make your current user session aware of this new group.
 #### GNOME extra
 
 ```
-# pacman -S brasero dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-color-manager gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder 	gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagre
+# pacman -S brasero dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-color-manager gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder 	gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagree
 ```
 
 ### HP Printers
