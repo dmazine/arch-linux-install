@@ -572,11 +572,51 @@ Update repository database and install Yaourt
 
 #### Intel
 
+Install the `mesa` package, which provides the DRI driver for 3D acceleration.
+
+* For 32-bit application support on x86_64, also install `lib32-mesa` from multilib.
+* For the DDX driver (which provides 2D acceleration in Xorg), install the `xf86-video-intel package`. **(Often not recommended, see note below.)**
+* For Vulkan support (Ivy Bridge and newer), install the `vulkan-intel package`.
+
+**Note:** Some (Debian & Ubuntu, Fedora, KDE) recommend not installing the xf86-video-intel driver, and instead falling back on the modesetting driver for fourth generation and newer GPUs. See [It is probably time to ditch xf86-video-intel](https://www.reddit.com/r/archlinux/comments/4cojj9/it_is_probably_time_to_ditch_xf86videointel/) and [Intel vs. Modesetting X.Org DDX Performance Impact](http://www.phoronix.com/scan.php?page=article&item=intel-modesetting-2017&num=1).
+
 ```
-# pacman -S mesa lib32-mesa xf86-video-intel vulkan-intel
+# pacman -S mesa lib32-mesa xf86-video-intel
 ```
 
-#### AMD
+#### ATI/AMD
+
+In order for video acceleration to work, and often to expose all the modes that the GPU can set, a proper video driver is required:
+
+|Brand  |Type       |Driver            |OpenGL            |OpenGL (Multilib)       |Documentation                                                        |
+|-------|-----------|------------------|------------------|------------------------|---------------------------------------------------------------------|
+|AMD/ATI|Open source|xf86-video-amdgpu |mesa              |lib32-mesa              |[AMDGPU](https://wiki.archlinux.org/index.php/AMDGPU)                |
+|AMD/ATI|Open source|xf86-video-ati    |mesa              |lib32-mesa              |[ATI](https://wiki.archlinux.org/index.php/ATI)                      |
+|AMD/ATI|Proprietary|catalyst          |catalyst-libgl    |lib32-catalyst-libgl    |[AMD Catalyst](https://wiki.archlinux.org/index.php/AMD_Catalyst)    |
+|Intel  |Open source|xf86-video-intel  |mesa              |lib32-mesa              |[Intel graphics](https://wiki.archlinux.org/index.php/Intel_graphics)|
+|Nvidia |Open source|xf86-video-nouveau|mesa              |lib32-mesa              |[Nouveau](https://wiki.archlinux.org/index.php/Nouveau)              |
+|Nvidia |Proprietary|nvidia            |nvidia-utils      |lib32-nvidia-utils      |[NVIDIA](https://wiki.archlinux.org/index.php/NVIDIA)                |
+|Nvidia |Proprietary|nvidia-340xx      |nvidia-340xx-utils|lib32-nvidia-340xx-utils|[NVIDIA](https://wiki.archlinux.org/index.php/NVIDIA)                |
+|Nvidia |Proprietary|nvidia-304xx      |nvidia-304xx-utils|lib32-nvidia-304xx-utils|[NVIDIA](https://wiki.archlinux.org/index.php/NVIDIA)                |
+
+**Note:** For NVIDIA Optimus enabled laptop which uses an integrated video card combined with a dedicated GPU, see [NVIDIA Optimus](https://wiki.archlinux.org/index.php/NVIDIA_Optimus) or [Bumblebee](https://wiki.archlinux.org/index.php/Bumblebee).
+
+**Tip:** If you are trying to figure out what drivers to install for your card, [this spreadsheet](https://goo.gl/R0Te9T) created by fellow Linux users may help you.
+
+**AMD**
+
+|GPU architecture|Radeon cards     |Open-source driver|Proprietary driver |
+|----------------|-----------------|------------------|-------------------|
+|GCN 4 and newer |various          |AMDGPU            |AMDGPU PRO         |
+|GCN 3           |various          |AMDGPU            |Catalyst/AMDGPU PRO|
+|GCN 2*          |various          |AMDGPU/ATI        |Catalyst           |
+|GCN 1*          |various          |AMDGPU/ATI        |Catalyst           |
+|TeraScale 2&3   |HD 5000 - HD 6000|ATI               |Catalyst           |
+|TeraScale 1     |HD 2000 - HD 4000|ATI               |Catalyst legacy    |
+|Older           |X1000 and older  |ATI               |not available      |
+
+*: Experimental AMDGPU support
+
 
 ```
 # pacman -S xf86-video-amdgpu lib32-mesa mesa-vdpau lib32-mesa-vdpau
@@ -584,10 +624,54 @@ Update repository database and install Yaourt
 
 #### Nvidia
 
+Install the appropriate driver for your card:
+
+* For GeForce 400 series cards and newer [NVCx and newer], install the `nvidia` or `nvidia-lts package`. If these packages do not work, `nvidia-beta` may have a newer driver version that offers support.
+* For GeForce 8000/9000, ION and 100-300 series cards [NV5x, NV8x, NV9x and NVAx] from around 2006-2010, install the `nvidia-340xx` or `nvidia-340xx-lts` package.
+* For GeForce 6000/7000 series cards [NV4x and NV6x] from around 2004-2006, install the `nvidia-304xx` or `nvidia-304xx-lts` package.
+* For even older cards, have a look at [#Unsupported drivers](https://wiki.archlinux.org/index.php/NVIDIA#Unsupported_drivers).
+
+For 32-bit application support on x86_64, you must also install the equivalent lib32 package from the multilib repository (e.g. `lib32-nvidia-utils`, `lib32-nvidia-340xx-utils` or `lib32-nvidia-304xx-utils`).
+
+Reboot. The nvidia package contains a file which blacklists the nouveau module, so rebooting is necessary.
+
+The NVIDIA package includes an automatic configuration tool to create an Xorg server configuration file (xorg.conf) and can be run by:
+
 ```
-# pacman -S nvidia nvidia-libgl
 # nvidia-xconfig
 ```
+
+This command will auto-detect and create (or edit, if already present) the `/etc/X11/xorg.conf` configuration according to present hardware.
+
+If there are instances of DRI, ensure they are commented out:
+
+```
+#    Load        "dri"
+```
+
+The `nvidia-settings` tool lets you configure many options using either CLI or GUI.
+
+#### Hybrid graphics
+
+PRIME is a technology used to manage hybrid graphics found on recent laptops (Optimus for NVIDIA, AMD Dynamic Switchable Graphics for Radeon). PRIME GPU offloading and Reverse PRIME is an attempt to support muxless hybrid graphics in the Linux kernel.
+
+Remove any closed-source graphic drivers and replace them with the open source equivalent:
+
+* xf86-video-nouveau
+
+* xf86-video-ati
+
+* xf86-video-amdgpu
+
+* xf86-video-intel
+
+Reboot and check the list of attached graphic drivers:
+
+```
+# xrandr --listproviders
+```
+
+We can see that there are two graphic cards: Intel, the integrated card (id 0x7d), and Radeon, the discrete card (id 0x56), which should be used for GPU-intensive applications.
 
 ### Audio driver
 
@@ -691,167 +775,12 @@ Enable network manager:
 # systemctl enable NetworkManager.service
 ```
 
-### VLC Media Player
-
-```
-# pacman -S vlc
-```
-
-### VI Improved
-
-```
-# pacman -S vim
-```
-
-### OpenSSH
-
-```
-# pacman -S openssh
-# systemctl enable sshd.socket
-```
-
-### File index and search
-
-```
-# pacman -S mlocate
-# updatedb
-```
-
-### Printing Service
-
-```
-# pacman -S cups cups-pdf system-config-printer
-# systemctl enable org.cups.cupsd.service
-```
-
-### HP Printers
-
-```
-# pacman -S hplip
-```
+### Install additional packages
 
 ### Archive formats
 
 ```
 # pacman -S p7zip unrar tar rsync
-```
-
-### Brasero
-
-CD/DVD mastering tool.
-
-```
-# pacman -S brasero
-```
-
-### DConf Editor
-
-dconf Editor.
-
-```
-# pacman -S dconf-editor
-```
-
-### Evolution
-
-Manage your email, contacts and schedule.
-
-```
-# pacman -S evolution
-```
-
-### File roller
-
-Create and modify archives
-
-```
-# pacman -S file-roller
-```
-
-### GNOME Calendar
-
-Simple and beautiful calendar application designed to perfectly fit the GNOME desktop.
-
-```
-# pacman -S gnome-calendar
-```
-
-### GEdit
-
-GNOME Text Editor.
-
-```
-# pacman -S gedit
-```
-
-### GNOME Clocks
-
-Clocks applications for GNOME.
-
-```
-# pacman -S gnome-clocks
-```
-
-### GNOME Nettol
-
-Graphical interface for various networking tools.
-
-```
-# pacman -S gnome-nettool
-```
-
-### GNOME Photos
-
-Access, organize, and share your photos on GNOME.
-
-```
-# pacman -S gnome-photos
-```
-
-### GNOME Sound Recorder
-
-A utility to make simple audio recording from your GNOME desktop.
-
-```
-# pacman -S gnome-sound-recorder
-```
-
-### GNOME Tweak Tool
-
-Customize advanced GNOME 3 options.
-
-```
-# pacman -S gnome-tweak-tool
-```
-
-### Nautilus Send To
-
-Easily send files via mail.
-
-```
-# pacman -S nautilus-sendto
-```
-
-### GNOME Seahorse
-
-GNOME application for managing PGP keys.
-
-```
-# pacman -S seahorse
-```
-
-### GNOME Vinagre
-
-A VNC Client for the GNOME desktop.
-
-```
-# pacman -S vinagre
-```
-
-### Libre Office
-
-```
-# pacman -S libreoffice
 ```
 
 ### Chromium Web Browser
@@ -860,93 +789,10 @@ A VNC Client for the GNOME desktop.
 # pacman -S chromium
 ```
 
-### Firefox Web Browser
-
-```
-# pacman -S firefox
-```
-
-### Java
-
-```
-# pacman -S jdk8-openjdk openjdk8-doc
-```
-
-### Skype
-
-```
-# yaourt -S skypeforlinux
-```
-
-### Spotify
-
-```
-# yaourt -S spotify
-```
-
-If you encounter the following error while installing, the public key needs to be downloaded.
-
-```
-==> Verifying source file signatures with gpg...
-    curl-7.54.0.tar.gz ... FAILED (unknown public key 5CC908FDB71E12C2)
-==> ERROR: One or more PGP signatures could not be verified!
-==> ERROR: Makepkg was unable to build libcurl-openssl-1.0.
-```
-
-To download the public key execute the following command:
-
-```
-# gpg --recv-keys 5CC908FDB71E12C2
-```
-
-### Eclipse
-
-```
-# pacman -S eclipse-jee
-```
-
-### NodeJS
-
-```
-# pacman -S nodejs
-```
-
-### Sublime Text 3
-
-```
-# yaourt -S sublime-text-dev
-```
-
 ### DBeaver
 
 ```
 # yaourt -S dbeaver
-```
-
-### SoapUI
-
-```
-# yaourt -S soapui
-```
-
-### VirtualBox
-
-Install the core packages.
-
-```
-# pacman -S virtualbox virtualbox-host-modules-arch virtualbox-guest-iso
-```
-
-Load the VirtualBox kernel modules.
-
-```
-# modprobe vboxdrv vboxnetadp vboxnetflt vboxpci
-```
-
-Add users that will be authorized to access host USB devices in guest to the `vboxusers` group.
-
-```
-# usermod -a -G vboxusers <login>
 ```
 
 ### Docker
@@ -974,6 +820,140 @@ Then re-login or to make your current user session aware of this new group.
 
 ```
 # newgrp docker
+```
+
+### Eclipse
+
+```
+# pacman -S eclipse-jee
+```
+
+### File index and search
+
+```
+# pacman -S mlocate
+# updatedb
+```
+
+### Firefox Web Browser
+
+```
+# pacman -S firefox
+```
+
+### Java
+
+```
+# pacman -S jdk8-openjdk openjdk8-doc
+```
+
+#### GNOME extra
+
+```
+# pacman -S brasero dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-color-manager gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder 	gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagre
+```
+
+### HP Printers
+
+```
+# pacman -S hplip
+```
+
+### Libre Office
+
+```
+# pacman -S libreoffice
+```
+
+### NodeJS
+
+```
+# pacman -S nodejs
+```
+
+### OpenSSH
+
+```
+# pacman -S openssh
+# systemctl enable sshd.socket
+```
+
+### Printing Service
+
+```
+# pacman -S cups cups-pdf system-config-printer
+# systemctl enable org.cups.cupsd.service
+```
+
+### Skype
+
+```
+# yaourt -S skypeforlinux
+```
+
+### SoapUI
+
+```
+# yaourt -S soapui
+```
+
+### Spotify
+
+```
+# yaourt -S spotify
+```
+
+If you encounter the following error while installing, the public key needs to be downloaded.
+
+```
+==> Verifying source file signatures with gpg...
+    curl-7.54.0.tar.gz ... FAILED (unknown public key 5CC908FDB71E12C2)
+==> ERROR: One or more PGP signatures could not be verified!
+==> ERROR: Makepkg was unable to build libcurl-openssl-1.0.
+```
+
+To download the public key execute the following command:
+
+```
+# gpg --recv-keys 5CC908FDB71E12C2
+```
+
+### Sublime Text 3
+
+```
+# yaourt -S sublime-text-dev
+```
+
+### VI Improved
+
+```
+# pacman -S vim
+```
+
+### VirtualBox
+
+Install the core packages.
+
+```
+# pacman -S virtualbox virtualbox-host-modules-arch virtualbox-guest-iso
+```
+
+Load the VirtualBox kernel modules.
+
+```
+# modprobe vboxdrv vboxnetadp vboxnetflt vboxpci
+```
+
+Add users that will be authorized to access host USB devices in guest to the `vboxusers` group.
+
+```
+# usermod -a -G vboxusers <login>
+```
+
+### VLC Media Player
+
+```
+# pacman -S vlc
 ```
 
 ## Troubleshooting
