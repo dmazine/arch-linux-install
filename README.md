@@ -847,6 +847,12 @@ Then re-login or to make your current user session aware of this new group.
 # pacman -S brasero dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-color-manager gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder 	gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagree
 ```
 
+Evolution Spell Check
+
+```
+# pacman -S aspell-en aspell-pt
+```
+
 ### HP Printers
 
 ```
