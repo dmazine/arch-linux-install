@@ -706,6 +706,12 @@ Install GNOME desktop
 # pacman -S gnome
 ```
 
+Install further GNOME applications, including an archive manager, disk manager, text editor, and a set of games.
+
+```
+# pacman -S gnome-extra
+```
+
 Enable `gdm.service` to start GDM at boot time
 
 ```
@@ -839,12 +845,6 @@ Then re-login or to make your current user session aware of this new group.
 
 ```
 # pacman -S jdk8-openjdk openjdk8-doc
-```
-
-### GNOME extra
-
-```
-# pacman -S brasero dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-color-manager gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder 	gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagree
 ```
 
 ### Evolution Spell Check
