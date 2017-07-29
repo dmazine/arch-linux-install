@@ -58,7 +58,6 @@ wifi-menu
 
 ```
 # timedatectl set-ntp true
-# systemctl enable systemd-timesyncd
 ```
 
 ### Partition the disks
@@ -332,7 +331,9 @@ It is recommended to also set the hostname in `/etc/hosts`:
 #<ip-address>    <hostname.domain.org>    <hostname>
 127.0.0.1        localhost.localdomain    localhost
 ::1              localhost.localdomain    localhost
-127.0.0.1        myhostname.localdomain   myhostname
+
+127.0.0.1        myhostname.mydomain      myhostname
+::1              myhostname.mydomain      myhostname
 ```
 
 ### Network configuration
@@ -389,7 +390,7 @@ options root=/dev/mapper/vg_linux-lv_root rw
 Update the default entry in `/boot/loader/loader.conf`
 
 ```
-timeout 1
+timeout 2
 default arch
 ```
 
@@ -517,13 +518,6 @@ Restart the machine:
 
 ## Post-installation
 
-### Create user
-
-```
-# useradd -m -g users -G wheel -s /bin/bash myuser
-# passwd myuser
-```
-
 ### Install and configure sudo
 
 ```
@@ -533,7 +527,7 @@ Restart the machine:
 Run the `visudo` to edit the `/etc/sudoers` file
 
 ```
-# EDITOR=nano visudo
+# visudo
 ```
 
 Grant sudo access to users in the group wheel when enabled.
@@ -541,6 +535,13 @@ Grant sudo access to users in the group wheel when enabled.
 ```
 ## Allows people in group wheel to run all commands
 %wheel    ALL=(ALL)    ALL
+```
+
+### Create user
+
+```
+# useradd -m -g users -G wheel -s /bin/bash myuser
+# passwd myuser
 ```
 
 ### Enable multilib repository in `/etc/pacman.conf`
@@ -581,7 +582,7 @@ Install the `mesa` package, which provides the DRI driver for 3D acceleration.
 **Note:** Some (Debian & Ubuntu, Fedora, KDE) recommend not installing the xf86-video-intel driver, and instead falling back on the modesetting driver for fourth generation and newer GPUs. See [It is probably time to ditch xf86-video-intel](https://www.reddit.com/r/archlinux/comments/4cojj9/it_is_probably_time_to_ditch_xf86videointel/) and [Intel vs. Modesetting X.Org DDX Performance Impact](http://www.phoronix.com/scan.php?page=article&item=intel-modesetting-2017&num=1).
 
 ```
-# pacman -S mesa lib32-mesa xf86-video-intel
+# pacman -S xf86-video-intel mesa lib32-mesa
 ```
 
 #### ATI/AMD
@@ -700,7 +701,7 @@ We can see that there are two graphic cards: Intel, the integrated card (id 0x7d
 
 ### Desktop Environment
 
-Install GNOME desktop
+#### GNOME desktop
 
 ```
 # pacman -S gnome
@@ -774,6 +775,16 @@ Enable network manager:
 ```
 # systemctl enable NetworkManager.service
 ```
+
+
+
+
+
+
+
+
+
+
 
 ### Install additional packages
 
