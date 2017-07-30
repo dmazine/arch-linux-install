@@ -283,7 +283,7 @@ Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirror
 ### Run `hwclock` to generate `/etc/adjtime`
 
 ```
-# hwclock --systohc --utc
+# hwclock --systohc
 ```
 
 ### Locale
@@ -292,7 +292,6 @@ Edit the `/etc/locale.gen` file and uncomment the following locales
 
 ```
 en_US.UTF-8 UTF-8
-en_US ISO-8859-1
 ```
 
 Generate the selected locales
@@ -331,9 +330,7 @@ It is recommended to also set the hostname in `/etc/hosts`:
 #<ip-address>    <hostname.domain.org>    <hostname>
 127.0.0.1        localhost.localdomain    localhost
 ::1              localhost.localdomain    localhost
-
-127.0.0.1        myhostname.mydomain      myhostname
-::1              myhostname.mydomain      myhostname
+127.0.0.1        myhostname.localdomain   myhostname
 ```
 
 ### Network configuration
@@ -707,10 +704,10 @@ We can see that there are two graphic cards: Intel, the integrated card (id 0x7d
 # pacman -S gnome
 ```
 
-Install further GNOME applications, including an archive manager, disk manager, text editor, and a set of games.
+Install further GNOME applications.
 
 ```
-# pacman -S gnome-extra
+# pacman -S brasero dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagre
 ```
 
 Enable `gdm.service` to start GDM at boot time
@@ -775,16 +772,6 @@ Enable network manager:
 ```
 # systemctl enable NetworkManager.service
 ```
-
-
-
-
-
-
-
-
-
-
 
 ### Install additional packages
 
