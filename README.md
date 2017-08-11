@@ -283,7 +283,7 @@ Finally, rank the mirrors. Operand `-n 6` means only output the 6 fastest mirror
 ### Run `hwclock` to generate `/etc/adjtime`
 
 ```
-# hwclock --systohc
+# hwclock --systohc --utc
 ```
 
 ### Locale
@@ -534,13 +534,6 @@ Grant sudo access to users in the group wheel when enabled.
 %wheel    ALL=(ALL)    ALL
 ```
 
-### Create user
-
-```
-# useradd -m -g users -G wheel -s /bin/bash myuser
-# passwd myuser
-```
-
 ### Enable multilib repository in `/etc/pacman.conf`
 
 ```
@@ -617,7 +610,7 @@ In order for video acceleration to work, and often to expose all the modes that 
 
 
 ```
-# pacman -S xf86-video-amdgpu lib32-mesa mesa-vdpau lib32-mesa-vdpau
+# pacman -S xf86-video-intel mesa mesa-vdpau lib32-mesa lib32-mesa-vdpau
 ```
 
 #### Nvidia
@@ -644,32 +637,61 @@ This command will auto-detect and create (or edit, if already present) the `/etc
 If there are instances of DRI, ensure they are commented out:
 
 ```
-#    Load        "dri"
+# Load "dri"
 ```
 
 The `nvidia-settings` tool lets you configure many options using either CLI or GUI.
 
-#### Hybrid graphics
+#### Hardware video accelaration
 
-PRIME is a technology used to manage hybrid graphics found on recent laptops (Optimus for NVIDIA, AMD Dynamic Switchable Graphics for Radeon). PRIME GPU offloading and Reverse PRIME is an attempt to support muxless hybrid graphics in the Linux kernel.
+There are several ways to achieve this on Linux:
 
-Remove any closed-source graphic drivers and replace them with the open source equivalent:
+	* Video Acceleration API (VA-API) is a specification and open source library to provide both hardware accelerated video encoding and decoding, developed by Intel.
+	* Video Decode and Presentation API for Unix (VDPAU) is an open source library and API to offload portions of the video decoding process and video post-processing to the GPU video-hardware, developed by NVIDIA.
+	* X-Video Motion Compensation (XvMC) is an extension for the X.Org Server, allowing video programs to offload portions of the video decoding process to the GPU video-hardware.
 
-* xf86-video-nouveau
+The choice varies depending on your video card vendor:
 
-* xf86-video-ati
+	* For Intel Graphics use VA-API.
+	* For NVIDIA cards use VDPAU.
+	* For AMD cards you can use both (with mesa). The difference is really only in the application implementation.
 
-* xf86-video-amdgpu
+There are also two specific types of drivers for VA-API and VDPAU:
 
-* xf86-video-intel
+	* `libva-vdpau-driver`, which uses VDPAU as a backend for VA-API.
+	* `libvdpau-va-gl`, which uses VA-API as a backend for VDPAU.
 
-Reboot and check the list of attached graphic drivers:
+**Installing VA-API**
 
-```
-# xrandr --listproviders
-```
+Open source drivers:
 
-We can see that there are two graphic cards: Intel, the integrated card (id 0x7d), and Radeon, the discrete card (id 0x56), which should be used for GPU-intensive applications.
+	* ATI/AMDGPU Radeon 9500 and newer GPUs are supported by either `libva-mesa-driver` with mesa or `libva-vdpau-driver`.
+	* Intel GMA 4500 series and newer GPUs are supported by `libva-intel-driver` with mesa.
+		To get better support on GMA 4500 consider `using libva-intel-driver-g45-h264` instead.
+	* NVIDIA GeForce 8 series and newer GPUs are supported by `libva-vdpau-driver`.
+
+Proprietary drivers:
+
+	* AMD cards depend on the driver:
+		* AMD Catalyst uses `xvba`.
+		* AMDGPU PRO uses `libva-vdpau-driver` + `amdgpu-pro-vdpau`.
+	* NVIDIA GeForce 8 series and newer GPUs are supported by `libva-vdpau-driver`.
+
+**Installing VDPAU**
+
+Open source drivers:
+
+    * ATI/AMDGPU Radeon 9500 and newer GPUs are supported by `mesa-vdpau`.
+    * Intel GMA 4500 series and newer GPUs are supported by `libvdpau-va-gl`.
+    * NVIDIA GeForce 8 series and newer GPUs are supported by `mesa-vdpau`. It requires `nouveau-fw`, which contains the required firmware to operate that is presently extracted from the NVIDIA binary driver.
+
+Proprietary drivers:
+
+	* AMD cards depend on the driver:
+		* AMD Catalyst uses `libvdpau-va-gl`.
+		* AMDGPU PRO uses `amdgpu-pro-vdpau`.
+	* NVIDIA GeForce 400 series and newer GPUs are supported by `nvidia-utils`.
+		*GeForce 8/9 and GeForce 100-300 series are supported by `nvidia-340xx-utils`.
 
 ### Audio driver
 
@@ -704,19 +726,19 @@ We can see that there are two graphic cards: Intel, the integrated card (id 0x7d
 # pacman -S gnome
 ```
 
-Install further GNOME applications.
-
-```
-# pacman -S brasero dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagre
-```
-
 Enable `gdm.service` to start GDM at boot time
 
 ```
 # systemctl enable gdm.service
 ```
 
-Tap-to-click is disabled in GDM (and GNOME) by default, but you can easily enable it with a dconf setting.
+Install additional applications.
+
+```
+# pacman -S brasero dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagre
+```
+
+Tap-to-click is disabled in GDM by default, but you can easily enable it with a dconf setting.
 
 To enable tap-to-click, use:
 
@@ -734,6 +756,38 @@ To check the if it was set correctly, use:
 
 ```
 # sudo -u gdm gsettings get org.gnome.desktop.peripherals.touchpad tap-to-click
+```
+
+#### Cinnamon desktop
+
+Install X environment
+
+```
+# pacman -S xorg-server xorg-xinit
+```
+
+Install Cinnamon
+
+```
+# pacman -S cinnamon nemo-fileroller
+```
+
+Install Display Manager
+
+```
+# pacman -S lightdm lightdm-gtk-greeter
+```
+
+Enable `lightdm.service` to start GDM at boot time
+
+```
+# systemctl enable lightdm.service
+```
+
+Install additional applications.
+
+```
+# pacman -S brasero evolution gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-terminal gnome-todo gnome-weather vinagre
 ```
 
 ### Network Manager
@@ -771,6 +825,13 @@ Enable network manager:
 
 ```
 # systemctl enable NetworkManager.service
+```
+
+### Create user
+
+```
+# useradd -m -g users -G wheel -s /bin/bash myuser
+# passwd myuser
 ```
 
 ### Install additional packages
@@ -1009,7 +1070,9 @@ mkinitcpio -p linux
 - [Intel graphics](https://wiki.archlinux.org/index.php/intel_graphics#Installation)
 - [AMDGPU](https://wiki.archlinux.org/index.php/AMDGPU)
 - [NVIDIA](https://wiki.archlinux.org/index.php/NVIDIA)
+- [Hardware video acceleration](https://wiki.archlinux.org/index.php/Hardware_video_acceleration#Installation)
 - [GNOME](https://wiki.archlinux.org/index.php/GNOME)
+- [Cinnamon](https://wiki.archlinux.org/index.php/cinnamon)
 - [How to install Gnome on Arch Linux](http://www.muktware.io/how-to-install-gnome-on-arch-linux-arch-tutorial/)
 - [GDM](https://wiki.archlinux.org/index.php/GDM)
 - [libinput](https://wiki.archlinux.org/index.php/Libinput#Touchpad_tapping)
