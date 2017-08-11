@@ -712,6 +712,10 @@ Proprietary drivers:
 
 	* GeForce 8/9 and GeForce 100-300 series are supported by `nvidia-340xx-utils`.
 
+```
+# pacman -S libva-intel-driver libva-vdpau-driver
+```
+
 ### Audio driver
 
 ```
@@ -754,7 +758,7 @@ Enable `gdm.service` to start GDM at boot time
 Install additional applications.
 
 ```
-# pacman -S brasero dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagre
+# pacman -S brasero eog dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-screeenshot gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagre
 ```
 
 Tap-to-click is disabled in GDM by default, but you can easily enable it with a dconf setting.
@@ -806,7 +810,7 @@ Enable `lightdm.service` to start GDM at boot time
 Install additional applications.
 
 ```
-# pacman -S brasero evolution gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-terminal gnome-todo gnome-weather vinagre
+# pacman -S brasero eog evolution gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-screeenshot gnome-terminal gnome-todo gnome-weather nemo-preview nemo-python vinagre
 ```
 
 ### Network Manager
