@@ -610,7 +610,7 @@ In order for video acceleration to work, and often to expose all the modes that 
 
 
 ```
-# pacman -S xf86-video-intel mesa mesa-vdpau lib32-mesa lib32-mesa-vdpau
+# pacman -S xf86-video-ati mesa mesa-vdpau lib32-mesa lib32-mesa-vdpau
 ```
 
 #### Nvidia
