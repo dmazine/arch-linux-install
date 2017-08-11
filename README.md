@@ -618,8 +618,11 @@ In order for video acceleration to work, and often to expose all the modes that 
 Install the appropriate driver for your card:
 
 * For GeForce 400 series cards and newer [NVCx and newer], install the `nvidia` or `nvidia-lts package`. If these packages do not work, `nvidia-beta` may have a newer driver version that offers support.
+
 * For GeForce 8000/9000, ION and 100-300 series cards [NV5x, NV8x, NV9x and NVAx] from around 2006-2010, install the `nvidia-340xx` or `nvidia-340xx-lts` package.
+
 * For GeForce 6000/7000 series cards [NV4x and NV6x] from around 2004-2006, install the `nvidia-304xx` or `nvidia-304xx-lts` package.
+
 * For even older cards, have a look at [#Unsupported drivers](https://wiki.archlinux.org/index.php/NVIDIA#Unsupported_drivers).
 
 For 32-bit application support on x86_64, you must also install the equivalent lib32 package from the multilib repository (e.g. `lib32-nvidia-utils`, `lib32-nvidia-340xx-utils` or `lib32-nvidia-304xx-utils`).
@@ -646,52 +649,68 @@ The `nvidia-settings` tool lets you configure many options using either CLI or G
 
 There are several ways to achieve this on Linux:
 
-	* Video Acceleration API (VA-API) is a specification and open source library to provide both hardware accelerated video encoding and decoding, developed by Intel.
-	* Video Decode and Presentation API for Unix (VDPAU) is an open source library and API to offload portions of the video decoding process and video post-processing to the GPU video-hardware, developed by NVIDIA.
-	* X-Video Motion Compensation (XvMC) is an extension for the X.Org Server, allowing video programs to offload portions of the video decoding process to the GPU video-hardware.
+* Video Acceleration API (VA-API) is a specification and open source library to provide both hardware accelerated video encoding and decoding, developed by Intel.
+
+* Video Decode and Presentation API for Unix (VDPAU) is an open source library and API to offload portions of the video decoding process and video post-processing to the GPU video-hardware, developed by NVIDIA.
+
+* X-Video Motion Compensation (XvMC) is an extension for the X.Org Server, allowing video programs to offload portions of the video decoding process to the GPU video-hardware.
 
 The choice varies depending on your video card vendor:
 
-	* For Intel Graphics use VA-API.
-	* For NVIDIA cards use VDPAU.
-	* For AMD cards you can use both (with mesa). The difference is really only in the application implementation.
+* For Intel Graphics use VA-API.
+
+* For NVIDIA cards use VDPAU.
+
+* For AMD cards you can use both (with mesa). The difference is really only in the application implementation.
 
 There are also two specific types of drivers for VA-API and VDPAU:
 
-	* `libva-vdpau-driver`, which uses VDPAU as a backend for VA-API.
-	* `libvdpau-va-gl`, which uses VA-API as a backend for VDPAU.
+* `libva-vdpau-driver`, which uses VDPAU as a backend for VA-API.
+
+* `libvdpau-va-gl`, which uses VA-API as a backend for VDPAU.
 
 **Installing VA-API**
 
 Open source drivers:
 
-	* ATI/AMDGPU Radeon 9500 and newer GPUs are supported by either `libva-mesa-driver` with mesa or `libva-vdpau-driver`.
-	* Intel GMA 4500 series and newer GPUs are supported by `libva-intel-driver` with mesa.
-		To get better support on GMA 4500 consider `using libva-intel-driver-g45-h264` instead.
-	* NVIDIA GeForce 8 series and newer GPUs are supported by `libva-vdpau-driver`.
+* ATI/AMDGPU Radeon 9500 and newer GPUs are supported by either `libva-mesa-driver` with mesa or `libva-vdpau-driver`.
+
+* Intel GMA 4500 series and newer GPUs are supported by `libva-intel-driver` with mesa.
+	To get better support on GMA 4500 consider `using libva-intel-driver-g45-h264` instead.
+
+* NVIDIA GeForce 8 series and newer GPUs are supported by `libva-vdpau-driver`.
 
 Proprietary drivers:
 
-	* AMD cards depend on the driver:
-		* AMD Catalyst uses `xvba`.
-		* AMDGPU PRO uses `libva-vdpau-driver` + `amdgpu-pro-vdpau`.
-	* NVIDIA GeForce 8 series and newer GPUs are supported by `libva-vdpau-driver`.
+* AMD cards depend on the driver:
+
+	* AMD Catalyst uses `xvba`.
+
+	* AMDGPU PRO uses `libva-vdpau-driver` + `amdgpu-pro-vdpau`.
+
+* NVIDIA GeForce 8 series and newer GPUs are supported by `libva-vdpau-driver`.
 
 **Installing VDPAU**
 
 Open source drivers:
 
-    * ATI/AMDGPU Radeon 9500 and newer GPUs are supported by `mesa-vdpau`.
-    * Intel GMA 4500 series and newer GPUs are supported by `libvdpau-va-gl`.
-    * NVIDIA GeForce 8 series and newer GPUs are supported by `mesa-vdpau`. It requires `nouveau-fw`, which contains the required firmware to operate that is presently extracted from the NVIDIA binary driver.
+* ATI/AMDGPU Radeon 9500 and newer GPUs are supported by `mesa-vdpau`.
+
+* Intel GMA 4500 series and newer GPUs are supported by `libvdpau-va-gl`.
+
+* NVIDIA GeForce 8 series and newer GPUs are supported by `mesa-vdpau`. It requires `nouveau-fw`, which contains the required firmware to operate that is presently extracted from the NVIDIA binary driver.
 
 Proprietary drivers:
 
-	* AMD cards depend on the driver:
-		* AMD Catalyst uses `libvdpau-va-gl`.
-		* AMDGPU PRO uses `amdgpu-pro-vdpau`.
-	* NVIDIA GeForce 400 series and newer GPUs are supported by `nvidia-utils`.
-		*GeForce 8/9 and GeForce 100-300 series are supported by `nvidia-340xx-utils`.
+* AMD cards depend on the driver:
+
+	* AMD Catalyst uses `libvdpau-va-gl`.
+
+	* AMDGPU PRO uses `amdgpu-pro-vdpau`.
+
+* NVIDIA GeForce 400 series and newer GPUs are supported by `nvidia-utils`.
+
+	* GeForce 8/9 and GeForce 100-300 series are supported by `nvidia-340xx-utils`.
 
 ### Audio driver
 
