@@ -952,12 +952,6 @@ Then re-login or to make your current user session aware of this new group.
 # pacman -S hplip
 ```
 
-### Modelio
-
-```
-# pacman -S modelio-bin
-```
-
 ### NodeJS
 
 ```
