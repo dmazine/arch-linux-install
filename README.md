@@ -983,7 +983,7 @@ If you want to be able to run docker as a regular user, add yourself to the dock
 ### StarUML
 
 ```
-# yaourt -S startuml
+# yaourt -S staruml
 ```
 
 ### Sublime Text 3
