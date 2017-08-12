@@ -640,6 +640,10 @@ The `nvidia-settings` tool lets you configure many options using either CLI or G
 
 Hybrid-graphics is a concept involving two graphics cards on same computer.
 
+Read [NVIDIA Optimus](https://wiki.archlinux.org/index.php/NVIDIA_Optimus) and [Bumblebee](https://wiki.archlinux.org/index.php/Bumblebee) for details about NVidia using hybrid graphics with NVidia’s proprietary driver.
+
+Read [PRIME](https://wiki.archlinux.org/index.php/PRIME) basically everything else (like AMD Radeon and NVidia GPUs with Nouveau driver).
+
 I have a Dell Inspiron 5547 laptop, which contains an Intel Integrated Graphics Processor (IGP) and a Radeon R7 M265 Dedicated/Discrete Graphics Processor (DGP). 
 
 This way, I'll install the appropriate driver for both. 
