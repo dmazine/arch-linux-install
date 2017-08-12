@@ -810,7 +810,7 @@ Install Cinnamon
 Install additional applications.
 
 ```
-# pacman -S brasero eog evolution firefox gedit gedit-code-assistance gimp gnome-calculator gnome-calendar gnome-characters gnome-documents gnome-music gnome-photos gnome-screenshot gnome-sound-recorder gnome-terminal gnome-todo gthumb libreoffice meld nemo-fileroller nemo-preview nemo-seahorse nemo-share pidgin simple-scan transmission-gtk vinagre vlc
+# pacman -S brasero eog evolution firefox gedit gedit-code-assistance gimp gnome-calculator gnome-calendar gnome-characters gnome-documents gnome-music gnome-photos gnome-screenshot gnome-sound-recorder gnome-system-monitor gnome-terminal gnome-todo gthumb libreoffice meld nemo-fileroller nemo-preview nemo-seahorse nemo-share pidgin simple-scan transmission-gtk vinagre vlc
 ```
 
 If you need other programs or utilities visit [Arch Linux Packages](https://www.archlinux.org/packages/), search for your package and install it via Pacman.
