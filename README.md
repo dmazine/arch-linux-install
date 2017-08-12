@@ -867,12 +867,6 @@ Enable network manager:
 # pacman -S p7zip unrar tar
 ```
 
-### Cinnamon themes and icons
-
-```
-# yaourt -S mint-cinnamon-themes mint-x-theme mint-x-icons
-```
-
 ### Chromium Web Browser
 
 ```
