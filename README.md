@@ -1066,15 +1066,30 @@ To check the if it was set correctly, use:
 
 ### Enable tap-to-click in LightDM
 
-Enable the `Tapping` option in a custom configuration file `/etc/X11/xorg.conf.d/30-touchpad.conf`.
+Enable the `Tapping` option in a custom configuration file `/etc/X11/xorg.conf.d/20-touchpad.conf`.
 
 ```
 Section "InputClass"
 	Identifier "libinput touchpad catchall"
 	MatchIsTouchpad "on"
+	MatchDevicePath "/dev/input/event*"
 	Driver "libinput"
 	Option "Tapping" "on"
-EndSection	
+EndSection
+```
+
+### Enable mouse natural scrolling
+
+Enable the `NaturalScrolling` option in a custom configuration file `/etc/X11/xorg.conf.d/30-pointer.conf`.
+
+```
+Section "InputClass"
+	Identifier "libinput pointer catchall"
+	MatchIsPointer "on"
+	MatchDevicePath "/dev/input/event*"
+	Driver "libinput"
+	Option "NaturalScrolling" "on"
+EndSection
 ```
 
 ## Troubleshooting
