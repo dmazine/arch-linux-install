@@ -774,7 +774,12 @@ A display manager, or login manager, is typically a graphical user interface tha
 ```
 # pacman -S lightdm lightdm-gtk-greeter
 # systemctl enable lightdm.service
+```
 
+There is also a simple configuration utility for the LightDM GTK+ Greeter.
+
+```
+# pacman -S lightdm-gtk-greeter-settings
 ```
 
 ### Desktop Environment
@@ -897,16 +902,23 @@ Install the `docker` package.
 # pacman -S docker
 ```
 
-Next start and enable `docker.service`.
+Next enable and start `docker.service`.
 
 ```
 # systemctl enable docker.service
+# systemctl start docker.service
 ```
 
 If you want to be able to run docker as a regular user, add yourself to the docker group.
 
 ```
 # gpasswd -a myuser docker
+```
+
+Then re-login or to make your current user session aware of this new group.
+
+```
+# newgrp docker
 ```
 
 ### Eclipse
@@ -1007,13 +1019,19 @@ Load the VirtualBox kernel modules.
 Add users that will be authorized to access host USB devices in guest to the `vboxusers` group.
 
 ```
-# usermod -a -G vboxusers <login>
+# gpasswd -a myuser vboxusers
+```
+
+Then re-login or to make your current user session aware of this new group.
+
+```
+# newgrp vboxusers
 ```
 
 ### XMind
 
 ```
-# pacman -S xmind
+# yaourt -S xmind
 ```
 
 ## Tips and Tricks
