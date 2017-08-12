@@ -978,6 +978,12 @@ Then re-login or to make your current user session aware of this new group.
 # yaourt -S skypeforlinux-bin
 ```
 
+### Slack
+
+```
+# yaourt -S slack-desktop
+```
+
 ### SoapUI
 
 ```
