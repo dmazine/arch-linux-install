@@ -359,12 +359,6 @@ Recreate the initramfs image:
 # mkinitcpio -p linux
 ```
 
-### Set root password
-
-```
-# passwd
-```
-
 ### Boot loader
 
 Install the boot loader.
@@ -493,6 +487,12 @@ devices {
 # [...]
 ```
 
+### Set root password
+
+```
+# passwd
+```
+
 ## Reboot
 
 Exit the chroot environment:
@@ -571,10 +571,6 @@ Install the `mesa` package, which provides the DRI driver for 3D acceleration.
 
 **Note:** Some (Debian & Ubuntu, Fedora, KDE) recommend not installing the xf86-video-intel driver, and instead falling back on the modesetting driver for fourth generation and newer GPUs. See [It is probably time to ditch xf86-video-intel](https://www.reddit.com/r/archlinux/comments/4cojj9/it_is_probably_time_to_ditch_xf86videointel/) and [Intel vs. Modesetting X.Org DDX Performance Impact](http://www.phoronix.com/scan.php?page=article&item=intel-modesetting-2017&num=1).
 
-```
-# pacman -S xf86-video-intel mesa lib32-mesa
-```
-
 #### ATI/AMD
 
 In order for video acceleration to work, and often to expose all the modes that the GPU can set, a proper video driver is required:
@@ -608,11 +604,6 @@ In order for video acceleration to work, and often to expose all the modes that 
 
 *: Experimental AMDGPU support
 
-
-```
-# pacman -S xf86-video-ati mesa mesa-vdpau lib32-mesa lib32-mesa-vdpau
-```
-
 #### Nvidia
 
 Install the appropriate driver for your card:
@@ -644,6 +635,26 @@ If there are instances of DRI, ensure they are commented out:
 ```
 
 The `nvidia-settings` tool lets you configure many options using either CLI or GUI.
+
+#### Hybrid graphics
+
+Hybrid-graphics is a concept involving two graphics cards on same computer.
+
+I have a Dell Inspiron 5547 laptop, which contains an Intel Integrated Graphics Processor (IGP) and a Radeon R7 M265 Dedicated/Discrete Graphics Processor (DGP). 
+
+This way, I'll install the appropriate driver for both. 
+
+* Intel Integrated Graphics Controller
+
+```
+# pacman -S xf86-video-intel mesa lib32-mesa
+```
+
+* Radeon R7 M265
+
+```
+# pacman -S xf86-video-ati mesa mesa-vdpau lib32-mesa lib32-mesa-vdpau
+```
 
 #### Hardware video accelaration
 
@@ -712,6 +723,8 @@ Proprietary drivers:
 
 	* GeForce 8/9 and GeForce 100-300 series are supported by `nvidia-340xx-utils`.
 
+Since my Dell Inspiron 5547 laptop contains an Intel IGP and a Radeon R7 M265 DGP, I'll install Intel and ATI/AMDGPU drivers. 
+
 ```
 # pacman -S libva-intel-driver libva-vdpau-driver
 ```
@@ -741,6 +754,25 @@ Proprietary drivers:
 # pacman -S ntfs-3g
 ```
 
+### Display Manager
+
+A display manager, or login manager, is typically a graphical user interface that is displayed at the end of the boot process in place of the default shell.
+
+#### GDM 
+
+```
+# pacman -S gdm
+# systemctl enable gdm.service
+```
+
+#### LightDM
+
+```
+# pacman -S lightdm lightdm-gtk-greeter
+# systemctl enable lightdm.service
+
+```
+
 ### Desktop Environment
 
 #### GNOME desktop
@@ -761,26 +793,6 @@ Install additional applications.
 # pacman -S brasero eog dconf-editor evolution file-roller gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-screeenshot gnome-todo gnome-tweak-tool gnome-weather nautilus-sendto seahorse vinagre
 ```
 
-Tap-to-click is disabled in GDM by default, but you can easily enable it with a dconf setting.
-
-To enable tap-to-click, use:
-
-```
-# sudo -u gdm gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
-```
-
-If you get the error `dconf-WARNING **: failed to commit changes to dconf: Error spawning command line`, make sure dbus is running:
-
-```
-# sudo -u gdm dbus-launch gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
-```
-
-To check the if it was set correctly, use:
-
-```
-# sudo -u gdm gsettings get org.gnome.desktop.peripherals.touchpad tap-to-click
-```
-
 #### Cinnamon desktop
 
 Install X environment
@@ -792,33 +804,23 @@ Install X environment
 Install Cinnamon
 
 ```
-# pacman -S cinnamon nemo-fileroller
-```
-
-Install Display Manager
-
-```
-# pacman -S lightdm lightdm-gtk-greeter
-```
-
-Enable `lightdm.service` to start GDM at boot time
-
-```
-# systemctl enable lightdm.service
+# pacman -S cinnamon
 ```
 
 Install additional applications.
 
 ```
-# pacman -S brasero eog evolution gedit gedit-code-assistance gnome-calendar gnome-characters gnome-clocks gnome-code-assistance gnome-color-manager gnome-documents gnome-getting-started-docs gnome-logs gnome-music gnome-nettool gnome-photos gnome-sound-recorder gnome-screeenshot gnome-terminal gnome-todo gnome-weather nemo-preview nemo-python vinagre
+# pacman -S brasero eog evolution firefox gedit gedit-code-assistance gimp gnome-calculator gnome-calendar gnome-characters gnome-documents gnome-music gnome-photos gnome-screenshot gnome-sound-recorder gnome-terminal gnome-todo gthumb libreoffice meld nemo-fileroller nemo-preview nemo-seahorse nemo-share pidgin simple-scan transmission-gtk vinagre vlc
 ```
+
+If you need other programs or utilities visit [Arch Linux Packages](https://www.archlinux.org/packages/), search for your package and install it via Pacman.
 
 ### Network Manager
 
 Install the network manager package and its GUI front-end.
 
 ```
-# pacman -S networkmanager network-manager-applet dhclient
+# pacman -S networkmanager network-manager-applet dhclient net-tools
 ```
 
 You must ensure that no other service that wants to configure the network is running; in fact, multiple networking services will conflict. So first let’s find our devices:
@@ -862,13 +864,25 @@ Enable network manager:
 ### Archive formats
 
 ```
-# pacman -S p7zip unrar tar rsync
+# pacman -S p7zip unrar tar
+```
+
+### Cinnamon themes and icons
+
+```
+# yaourt -S mint-cinnamon-themes
 ```
 
 ### Chromium Web Browser
 
 ```
 # pacman -S chromium
+```
+
+### ClipIt
+
+```
+# yaourt -S clipit
 ```
 
 ### DBeaver
@@ -888,7 +902,6 @@ Install the `docker` package.
 Next start and enable `docker.service`.
 
 ```
-# systemctl start docker.service
 # systemctl enable docker.service
 ```
 
@@ -896,12 +909,6 @@ If you want to be able to run docker as a regular user, add yourself to the dock
 
 ```
 # gpasswd -a myuser docker
-```
-
-Then re-login or to make your current user session aware of this new group.
-
-```
-# newgrp docker
 ```
 
 ### Eclipse
@@ -915,12 +922,6 @@ Then re-login or to make your current user session aware of this new group.
 ```
 # pacman -S mlocate
 # updatedb
-```
-
-### Firefox Web Browser
-
-```
-# pacman -S firefox
 ```
 
 ### Java
@@ -939,12 +940,6 @@ Then re-login or to make your current user session aware of this new group.
 
 ```
 # pacman -S hplip
-```
-
-### Libre Office
-
-```
-# pacman -S libreoffice
 ```
 
 ### NodeJS
@@ -970,7 +965,7 @@ Then re-login or to make your current user session aware of this new group.
 ### Skype
 
 ```
-# yaourt -S skypeforlinux
+# yaourt -S skypeforlinux-bin
 ```
 
 ### SoapUI
@@ -985,19 +980,10 @@ Then re-login or to make your current user session aware of this new group.
 # yaourt -S spotify
 ```
 
-If you encounter the following error while installing, the public key needs to be downloaded.
+### StarUML
 
 ```
-==> Verifying source file signatures with gpg...
-    curl-7.54.0.tar.gz ... FAILED (unknown public key 5CC908FDB71E12C2)
-==> ERROR: One or more PGP signatures could not be verified!
-==> ERROR: Makepkg was unable to build libcurl-openssl-1.0.
-```
-
-To download the public key execute the following command:
-
-```
-# gpg --recv-keys 5CC908FDB71E12C2
+# yaourt -S startuml
 ```
 
 ### Sublime Text 3
@@ -1032,10 +1018,47 @@ Add users that will be authorized to access host USB devices in guest to the `vb
 # usermod -a -G vboxusers <login>
 ```
 
-### VLC Media Player
+### XMind
 
 ```
-# pacman -S vlc
+# pacman -S xmind
+```
+
+## Tips and Tricks
+
+### Enable tap-to-click in GDM
+
+Tap-to-click is disabled in GDM by default, but you can easily enable it with a dconf setting.
+
+To enable tap-to-click, use:
+
+```
+# sudo -u gdm gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+```
+
+If you get the error `dconf-WARNING **: failed to commit changes to dconf: Error spawning command line`, make sure dbus is running:
+
+```
+# sudo -u gdm dbus-launch gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+```
+
+To check the if it was set correctly, use:
+
+```
+# sudo -u gdm gsettings get org.gnome.desktop.peripherals.touchpad tap-to-click
+```
+
+### Enable tap-to-click in LightDM
+
+Enable the `Tapping` option in a custom configuration file `/etc/X11/xorg.conf.d/30-touchpad.conf`.
+
+```
+Section "InputClass"
+	Identifier "libinput touchpad catchall"
+	MatchIsTouchpad "on"
+	Driver "libinput"
+	Option "Tapping" "on"
+EndSection	
 ```
 
 ## Troubleshooting
@@ -1110,3 +1133,4 @@ mkinitcpio -p linux
 - [How To Configure Periodic TRIM for SSD Storage on Linux Servers](https://www.digitalocean.com/community/tutorials/how-to-configure-periodic-trim-for-ssd-storage-on-linux-servers)
 - [Arch Linux - SSD Trim on encrypted LVM volumes](http://ggarcia.me/2016/10/11/arch-linux-ssd-trim.html)
 - [Arch Linux Post Installation (30 Things to do after Installing Arch Linux)](http://www.2daygeek.com/arch-linux-post-installation-30-things-to-do-after-installing-arch-linux/#)
+- [Installing GUI (Cinnamon Desktop) and Basic Softwares in Arch Linux](https://www.tecmint.com/install-cinnamon-desktop-in-arch-linux/)
