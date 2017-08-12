@@ -870,7 +870,7 @@ Enable network manager:
 ### Cinnamon themes and icons
 
 ```
-# yaourt -S mint-cinnamon-themes
+# yaourt -S mint-cinnamon-themes mint-x-theme mint-x-icons
 ```
 
 ### Chromium Web Browser
