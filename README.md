@@ -952,6 +952,12 @@ Then re-login or to make your current user session aware of this new group.
 # pacman -S hplip
 ```
 
+### Maven
+
+```
+# pacman -S maven
+```
+
 ### NodeJS
 
 ```
