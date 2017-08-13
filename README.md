@@ -955,7 +955,7 @@ Then re-login or to make your current user session aware of this new group.
 ### NodeJS
 
 ```
-# pacman -S nodejs
+# pacman -S nodejs npm
 ```
 
 ### OpenSSH
