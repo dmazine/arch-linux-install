@@ -946,10 +946,16 @@ Then re-login or to make your current user session aware of this new group.
 # pacman -S aspell-en aspell-pt
 ```
 
-### HP Printers
+### Printers
 
 ```
 # pacman -S hplip
+```
+
+The latest gtk3 (3.22) requires the gtk3-print-backends to be listed in GTK3 print dialogs.
+
+```
+gtk3-print-backends
 ```
 
 ### Maven
