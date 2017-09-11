@@ -733,6 +733,40 @@ Since my Dell Inspiron 5547 laptop contains an Intel IGP and a Radeon R7 M265 DG
 # pacman -S libva-intel-driver libva-vdpau-driver
 ```
 
+#### PRIME
+
+Check the list of attached graphic drivers:
+
+```
+# xrandr --listproviders
+```
+
+```
+Providers: number : 2
+Provider 0: id: 0x66 cap: 0xb, Source Output, Sink Output, Sink Offload crtcs: 4 outputs: 3 associated providers: 1 name:Intel
+Provider 1: id: 0x3f cap: 0xd, Source Output, Source Offload, Sink Offload crtcs: 0 outputs: 0 associated providers: 1 name:AMD Radeon R7 M260 @ pci:0000:03:00.0
+```
+
+By default the Intel card is always used:
+
+``` 
+# glxinfo | grep "OpenGL renderer"
+```
+
+```
+OpenGL renderer string: Mesa DRI Intel(R) Haswell Mobile
+```
+
+GPU-intensive applications should be rendered on the more powerful discrete card. You can use your discrete card for the applications who need it the most (for example games, 3D modellers...) by prepending the `DRI_PRIME=1` environment variable:
+
+``` 
+DRI_PRIME=1 glxinfo | grep "OpenGL renderer"
+``` 
+
+```
+OpenGL renderer string: AMD Radeon R7 M260 (AMD ICELAND / DRM 3.15.0 / 4.12.12-1-ARCH, LLVM 4.0.1)
+```
+
 ### Audio driver
 
 ```
