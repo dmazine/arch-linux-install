@@ -760,7 +760,7 @@ OpenGL renderer string: Mesa DRI Intel(R) Haswell Mobile
 GPU-intensive applications should be rendered on the more powerful discrete card. You can use your discrete card for the applications who need it the most (for example games, 3D modellers...) by prepending the `DRI_PRIME=1` environment variable:
 
 ``` 
-DRI_PRIME=1 glxinfo | grep "OpenGL renderer"
+# DRI_PRIME=1 glxinfo | grep "OpenGL renderer"
 ``` 
 
 ```
