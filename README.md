@@ -657,7 +657,7 @@ This way, I'll install the appropriate driver for both.
 * Radeon R7 M265
 
 ```
-# pacman -S xf86-video-ati mesa mesa-vdpau lib32-mesa lib32-mesa-vdpau
+# pacman -S xf86-video-amdgpu mesa mesa-vdpau lib32-mesa lib32-mesa-vdpau
 ```
 
 #### Hardware video accelaration
