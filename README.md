@@ -644,7 +644,7 @@ Read [NVIDIA Optimus](https://wiki.archlinux.org/index.php/NVIDIA_Optimus) and [
 
 Read [PRIME](https://wiki.archlinux.org/index.php/PRIME) basically everything else (like AMD Radeon and NVidia GPUs with Nouveau driver).
 
-I have a Dell Inspiron 5547 laptop, which contains an Intel Integrated Graphics Processor (IGP) and a Radeon R7 M265 Dedicated/Discrete Graphics Processor (DGP). 
+I have a Dell Inspiron 5547 laptop, which contains an Intel Integrated Graphics Processor (IGP) and an AMD Radeon R7 M260 Dedicated/Discrete Graphics Processor (DGP). 
 
 This way, I'll install the appropriate driver for both. 
 
@@ -654,7 +654,7 @@ This way, I'll install the appropriate driver for both.
 # pacman -S xf86-video-intel mesa lib32-mesa
 ```
 
-* Radeon R7 M265
+* AMD Radeon R7 M260
 
 ```
 # pacman -S xf86-video-amdgpu mesa mesa-vdpau lib32-mesa lib32-mesa-vdpau
