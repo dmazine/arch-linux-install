@@ -1178,6 +1178,28 @@ Recompile kernel:
 mkinitcpio -p linux
 ```
 
+### Suspend/hibernate doesn't work, or not consistently
+
+There have been many reports about the screen going black without easily viewable errors or the ability to do anything when going into and coming back from suspend and/or hibernate. These problems have been seen on both laptops and desktops. This is not an official solution, but switching to an older kernel, especially the LTS-kernel, will probably fix this.
+
+Sometimes the screen goes black due to device initialization from within the initramfs. Removing any modules you might have in [Mkinitcpio#MODULES](https://wiki.archlinux.org/index.php/Mkinitcpio#MODULES) and rebuilding the initramfs, can possibly solve this issue, specially graphics drivers for early KMS. Initializing such devices before resuming can cause inconsistencies that prevents the system resuming from hibernation. This does not affect resuming from RAM. Also, check this [article](https://01.org/blogs/rzhang/2015/best-practice-debug-linux-suspend/hibernate-issues) for the best practices to debug suspend/hibernate issues.
+
+For Intel graphics drivers, enabling early KMS may help to solve the blank screen issue. Refer to Kernel mode [setting#Early KMS start](https://wiki.archlinux.org/index.php/Kernel_mode_setting#Early_KMS_start) for details.
+
+Add the module `i915` to the MODULES line in `/etc/mkinitcpio.conf`
+
+```
+MODULES="... i915 ..."
+```
+
+Note: Intel users might need to add `intel_agp` before `i915` to suppress the ACPI errors. This might be required for resuming from hibernation to work with changed display configuration!
+
+Recreate the initramfs image:
+
+```
+# mkinitcpio -p linux
+```
+
 ## References
 
 - [Arch Linux Installation guide](https://wiki.archlinux.org/index.php/installation_guide#Pre-installation)
