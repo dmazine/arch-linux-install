@@ -980,10 +980,10 @@ Then re-login or to make your current user session aware of this new group.
 # pacman -S aspell-en aspell-pt
 ```
 
-### Printers
+### HP Printers
 
 ```
-# pacman -S hplip
+# pacman -S hplip python-pyqt5
 ```
 
 The latest gtk3 (3.22) requires the gtk3-print-backends to be listed in GTK3 print dialogs.
